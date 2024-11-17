@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "831495848668",
+    "project_id": "seaguardproject",
+    "storage_bucket": "seaguardproject.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831495848668:android:d7557ed4bb61a247366a19",
+        "android_client_info": {
+          "package_name": "com.seaguard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK-TMlN7Tm-EMDvPYLcui2RQuCVhRhteg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
