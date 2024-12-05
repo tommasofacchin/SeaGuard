@@ -47,11 +47,17 @@ dependencies {
             implementation(libs.navigation.fragment)
             implementation(libs.navigation.ui)
             implementation(libs.firebase.firestore)
+            implementation(libs.annotation)
             testImplementation(libs.junit)
             androidTestImplementation(libs.ext.junit)
             androidTestImplementation(libs.espresso.core)
-    // Tommaso : Firebase SDK
-    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-firestore")
+            // Tommaso : Firebase SDK
+            implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+            implementation("com.google.firebase:firebase-analytics")
+            implementation("com.google.firebase:firebase-firestore")
+            // Add the dependency for the Firebase Authentication library
+            // When using the BoM, you don't specify versions in Firebase library dependencies
+            implementation("com.google.firebase:firebase-auth")
+            // Material 3
+            implementation ("com.google.android.material:material:1.7.5")
 }

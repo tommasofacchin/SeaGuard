@@ -1,4 +1,4 @@
-package com.seaguard.ui.dashboard;
+package com.seaguard.ui.explore;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.seaguard.databinding.FragmentDashboardBinding;
+import com.seaguard.databinding.FragmentExploreBinding;
 
-public class DashboardFragment extends Fragment {
+public class ExploreFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentExploreBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        ExploreViewModel notificationsViewModel =
+                new ViewModelProvider(this).get(ExploreViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentExploreBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textNotifications;
+        notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
