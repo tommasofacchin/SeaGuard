@@ -1,7 +1,12 @@
 package com.seaguard;
 
+import android.Manifest;
+
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -10,8 +15,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,6 +32,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.seaguard.databinding.ActivityMainBinding;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -31,6 +42,8 @@ import com.seaguard.ui.home.HomeFragment;
 import com.seaguard.ui.reports.ReportsFragment;
 import com.seaguard.ui.settings.SettingsFragment;
 
+import org.osmdroid.config.Configuration;
+
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -38,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private ReportsFragment reportsFragment = new ReportsFragment();
     private ExploreFragment exploreFragment = new ExploreFragment();
     private SettingsFragment settingsFragment = new SettingsFragment();
-
+    private final int PERMISSIONS_REQUEST_CODE = 1;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
@@ -47,9 +60,29 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
+        if (currentUser != null) {
             //reload();
         }
+
+        // Ask permissions
+        // Register the permissions callback, which handles the user's response to the
+        // system permissions dialog. Save the return value, an instance of
+        // ActivityResultLauncher, as an instance variable.
+        ActivityResultLauncher<String> requestPermissionLauncher =
+                registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                    if (isGranted) {
+                        // Permission is granted. Continue the action or workflow in your
+                        // app.
+                    } else {
+                        // Explain to the user that the feature is unavailable because the
+                        // feature requires a permission that the user has denied. At the
+                        // same time, respect the user's decision. Don't link to system
+                        // settings in an effort to convince the user to change their
+                        // decision.
+                    }
+                });
+        requestPermissions();
+
     }
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -57,27 +90,27 @@ public class MainActivity extends AppCompatActivity {
 
         if (itemId == R.id.navigation_home) {
             getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flFragment, homeFragment)
-                .commit();
+                    .beginTransaction()
+                    .replace(R.id.flFragment, homeFragment)
+                    .commit();
             return true;
         } else if (itemId == R.id.navigation_reports) {
             getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flFragment, reportsFragment)
-                .commit();
+                    .beginTransaction()
+                    .replace(R.id.flFragment, reportsFragment)
+                    .commit();
             return true;
         } else if (itemId == R.id.navigation_explore) {
             getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flFragment, exploreFragment)
-                .commit();
+                    .beginTransaction()
+                    .replace(R.id.flFragment, exploreFragment)
+                    .commit();
             return true;
         } else if (itemId == R.id.navigation_settings) {
             getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flFragment, settingsFragment)
-                .commit();
+                    .beginTransaction()
+                    .replace(R.id.flFragment, settingsFragment)
+                    .commit();
             return true;
         }
         return false;
@@ -86,6 +119,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // OpenStreetMap Configuration
+        Context ctx = getApplicationContext();
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -96,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
         // Default Fragment (Home)
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-            .replace(R.id.flFragment, homeFragment)
-            .commit();
+                .replace(R.id.flFragment, homeFragment)
+                .commit();
         }
 
         // Passing each menu ID as a set of Ids because each
@@ -136,6 +173,45 @@ public class MainActivity extends AppCompatActivity {
          */
 
 
+    }
+
+  @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+      ArrayList<String> permissionsToRequest = new ArrayList<>(Arrays.asList(permissions).subList(0, grantResults.length));
+
+        if (!permissionsToRequest.isEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsToRequest.toArray(new String[0]),
+                PERMISSIONS_REQUEST_CODE
+            );
+        }
+    }
+
+    private void requestPermissions() {
+        final String[] PERMISSIONS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.INTERNET,
+        };
+
+        ArrayList<String> permissionsToRequest = new ArrayList<>();
+
+        for(String permission : PERMISSIONS) {
+            if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(permission);
+            }
+        }
+
+        if(!permissionsToRequest.isEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsToRequest.toArray(new String[0]),
+                PERMISSIONS_REQUEST_CODE
+            );
+        }
     }
 
 }

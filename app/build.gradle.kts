@@ -48,7 +48,8 @@ dependencies {
             implementation(libs.navigation.ui)
             implementation(libs.firebase.firestore)
             implementation(libs.annotation)
-            testImplementation(libs.junit)
+    implementation(libs.play.services.maps)
+    testImplementation(libs.junit)
             androidTestImplementation(libs.ext.junit)
             androidTestImplementation(libs.espresso.core)
             // Tommaso : Firebase SDK
@@ -60,4 +61,6 @@ dependencies {
             implementation("com.google.firebase:firebase-auth")
             // Material 3
             implementation ("com.google.android.material:material:1.7.5")
+            // OpenStreetMap
+            implementation ("org.osmdroid:osmdroid-android:6.1.20")
 }
