@@ -48,8 +48,7 @@ dependencies {
             implementation(libs.navigation.ui)
             implementation(libs.firebase.firestore)
             implementation(libs.annotation)
-    implementation(libs.play.services.maps)
-    testImplementation(libs.junit)
+            testImplementation(libs.junit)
             androidTestImplementation(libs.ext.junit)
             androidTestImplementation(libs.espresso.core)
             // Tommaso : Firebase SDK

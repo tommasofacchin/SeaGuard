@@ -2,27 +2,22 @@ package com.seaguard;
 
 import android.Manifest;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -47,10 +42,10 @@ import org.osmdroid.config.Configuration;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private HomeFragment homeFragment = new HomeFragment();
-    private ReportsFragment reportsFragment = new ReportsFragment();
-    private ExploreFragment exploreFragment = new ExploreFragment();
-    private SettingsFragment settingsFragment = new SettingsFragment();
+    private final HomeFragment homeFragment = new HomeFragment();
+    private final ReportsFragment reportsFragment = new ReportsFragment();
+    private final ExploreFragment exploreFragment = new ExploreFragment();
+    private final SettingsFragment settingsFragment = new SettingsFragment();
     private final int PERMISSIONS_REQUEST_CODE = 1;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -63,57 +58,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser != null) {
             //reload();
         }
-
-        // Ask permissions
-        // Register the permissions callback, which handles the user's response to the
-        // system permissions dialog. Save the return value, an instance of
-        // ActivityResultLauncher, as an instance variable.
-        ActivityResultLauncher<String> requestPermissionLauncher =
-                registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                    if (isGranted) {
-                        // Permission is granted. Continue the action or workflow in your
-                        // app.
-                    } else {
-                        // Explain to the user that the feature is unavailable because the
-                        // feature requires a permission that the user has denied. At the
-                        // same time, respect the user's decision. Don't link to system
-                        // settings in an effort to convince the user to change their
-                        // decision.
-                    }
-                });
         requestPermissions();
-
-    }
-
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int itemId = item.getItemId();
-
-        if (itemId == R.id.navigation_home) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.flFragment, homeFragment)
-                    .commit();
-            return true;
-        } else if (itemId == R.id.navigation_reports) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.flFragment, reportsFragment)
-                    .commit();
-            return true;
-        } else if (itemId == R.id.navigation_explore) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.flFragment, exploreFragment)
-                    .commit();
-            return true;
-        } else if (itemId == R.id.navigation_settings) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.flFragment, settingsFragment)
-                    .commit();
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -127,24 +72,24 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        navView.setOnItemSelectedListener(this::onNavigationItemSelected);
 
-        // Default Fragment (Home)
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flFragment, homeFragment)
-                .commit();
-        }
+        // ToolBar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // NavBar
+        BottomNavigationView navView = findViewById(R.id.nav_view);
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_reports, R.id.navigation_explore, R.id.navigation_settings)
-                .build();
-        //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        //NavigationUI.setupWithNavController(binding.navView, navController);
+            R.id.navigation_home, R.id.navigation_reports, R.id.navigation_explore, R.id.navigation_settings)
+            .build();
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        assert navHostFragment != null;
+        NavController navController = navHostFragment.getNavController();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.navView, navController);
 
 
         db = FirebaseFirestore.getInstance();
@@ -173,6 +118,34 @@ public class MainActivity extends AppCompatActivity {
          */
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+
+        // Define the listener.
+        MenuItem.OnActionExpandListener expandListener = new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(@NonNull MenuItem item) {
+                // Do something when the action item collapses.
+                return true;  // Return true to collapse action view.
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(@NonNull MenuItem item) {
+                // Do something when it expands.
+                return true;  // Return true to expand the action view.
+            }
+        };
+
+        // Get the MenuItem for the action item.
+        MenuItem action_search = menu.findItem(R.id.action_search);
+
+        // For anything else you have to do when creating the options menu,
+        // do the following:
+
+        return true;
     }
 
   @Override
