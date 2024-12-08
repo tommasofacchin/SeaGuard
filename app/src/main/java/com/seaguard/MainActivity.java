@@ -3,19 +3,26 @@ package com.seaguard;
 import android.Manifest;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
+
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,30 +30,19 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.seaguard.databinding.ActivityMainBinding;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.seaguard.ui.explore.ExploreFragment;
-import com.seaguard.ui.home.HomeFragment;
-import com.seaguard.ui.reports.ReportsFragment;
-import com.seaguard.ui.settings.SettingsFragment;
+import com.seaguard.ui.home.HomeViewModel;
 
 import org.osmdroid.config.Configuration;
 
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private final HomeFragment homeFragment = new HomeFragment();
-    private final ReportsFragment reportsFragment = new ReportsFragment();
-    private final ExploreFragment exploreFragment = new ExploreFragment();
-    private final SettingsFragment settingsFragment = new SettingsFragment();
-    private final int PERMISSIONS_REQUEST_CODE = 1;
+    private final int REQUEST_PERMISSIONS = 1;
+    private final int REQUEST_TO_ENABLE_LOCATION = 2;
+    private HomeViewModel homeViewModel;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
@@ -91,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         db = FirebaseFirestore.getInstance();
 
@@ -149,42 +146,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
   @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults.length > 0) requestToEnableGps();
+    }
 
-      ArrayList<String> permissionsToRequest = new ArrayList<>(Arrays.asList(permissions).subList(0, grantResults.length));
-
-        if (!permissionsToRequest.isEmpty()) {
-            ActivityCompat.requestPermissions(
-                this,
-                permissionsToRequest.toArray(new String[0]),
-                PERMISSIONS_REQUEST_CODE
-            );
-        }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TO_ENABLE_LOCATION) homeViewModel.setLocation();
     }
 
     private void requestPermissions() {
-        final String[] PERMISSIONS = {
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.INTERNET,
-        };
-
-        ArrayList<String> permissionsToRequest = new ArrayList<>();
-
-        for(String permission : PERMISSIONS) {
-            if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                permissionsToRequest.add(permission);
-            }
-        }
-
-        if(!permissionsToRequest.isEmpty()) {
-            ActivityCompat.requestPermissions(
+        if(ContextCompat.checkSelfPermission(
                 this,
-                permissionsToRequest.toArray(new String[0]),
-                PERMISSIONS_REQUEST_CODE
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.INTERNET
+                    },
+                    REQUEST_PERMISSIONS
             );
         }
+        else requestToEnableGps();
+    }
+
+    private void requestToEnableGps () {
+        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        boolean isEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if(!isEnabled){
+             new AlertDialog.Builder(this)
+                .setMessage(R.string.gps_network_not_enabled)
+                .setPositiveButton(R.string.open_location_settings, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton(R.string.cancel,null)
+                .show();
+        }
+        else homeViewModel.setLocation();
     }
 
 }
