@@ -41,18 +41,77 @@ public class HomeFragment extends Fragment {
         // Location
         MyLocationNewOverlay location = new MyLocationNewOverlay(new GpsMyLocationProvider(map.getContext()), map);
         location.enableMyLocation();
+        //aggiunta per mettere al centro della mappa la posizione appena disponibile
+        /*location.runOnFirstFix(() -> {
+            if (map != null && location.getMyLocation() != null) {
+                map.getController().animateTo(location.getMyLocation());
+            }
+        });*/
+        location.runOnFirstFix(() -> {
+            if (map != null && location.getMyLocation() != null) {
+                // La posizione è disponibile, centriamo la mappa su di essa
+                map.getController().animateTo(location.getMyLocation());
+            } else {
+                // La posizione non è disponibile, puoi decidere cosa fare
+                // Ad esempio, centrare la mappa su una posizione predefinita (Roma, ad esempio)
+                GeoPoint defaultLocation = new GeoPoint(41.9028, 12.4964); // Roma
+                map.getController().animateTo(defaultLocation);
+            }
+        });
+
         map.getOverlays().add(location);
 
-        // GeoPoint startPoint = new GeoPoint(48.8588443, 2.2943506); // Esempio: Torre Eiffel
-        // mapController.setCenter(startPoint);
+        // Restore state, se esiste gia un istanza di mappa salvata dopo
+        // un qualche evento riparti da quella
+        if (savedInstanceState != null) {
+            double latitude = savedInstanceState.getDouble("latitude", 48.8588443); // Default
+            double longitude = savedInstanceState.getDouble("longitude", 2.2943506);
+            int zoom = savedInstanceState.getInt("zoom", 6);
+            mapController.setZoom(zoom);
+            mapController.setCenter(new GeoPoint(latitude, longitude));
+        }
 
         return root;
+
     }
 
+    //metodi onAzione per il comportamento corretto del fragment dopo
+    //un qualsiasi evento,
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (binding != null) {
+            MapView map = binding.map;
+            GeoPoint center = (GeoPoint) map.getMapCenter();
+            outState.putDouble("latitude", center.getLatitude());
+            outState.putDouble("longitude", center.getLongitude());
+            outState.putInt("zoom", map.getZoomLevel());
+        }
+    }
+
+    //Quando il fragment torna in primo piano (ad esempio, l'utente naviga indietro).
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (binding != null) {
+            binding.map.onResume();
+        }
+    }
+
+    //Quando il fragment non è più visibile mette in pausa per risparmiare risorse
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (binding != null) {
+            binding.map.onPause();
+        }
+    }
+
+    //per evitare memoryleak imposto il binding a null, altirmenti il GC non sa che può liberare la risorsa
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-
 }
