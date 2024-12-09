@@ -1,6 +1,12 @@
 package com.seaguard.database;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.seaguard.ui.reports.ReportsViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -31,5 +37,32 @@ public class DbHelper {
             .addOnSuccessListener(unused -> callBack.accept(null))
             .addOnFailureListener(callBack::accept);
     }
+
+    // Tommaso
+    public static void getReports(Consumer<List<ReportModel>> onSuccess, Consumer<Exception> onFailure) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("reports") // Nome della collection
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<ReportModel> reports = new ArrayList<>();
+                    querySnapshot.forEach(document -> {
+                        // Converti il documento in un ReportModel
+                        ReportModel report = new ReportModel(document.getData());
+                        if (report != null) {
+                            report.setIdReport(document.getId()); // Imposta l'ID del documento
+                            reports.add(report);
+                        }
+                    });
+                    onSuccess.accept(reports); // Chiamata al callback con i dati
+                })
+                .addOnFailureListener(onFailure::accept); // Callback per gestire errori
+    }
+
+
+
+
+
+
 
 }
