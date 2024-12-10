@@ -13,7 +13,6 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
