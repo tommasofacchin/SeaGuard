@@ -26,6 +26,7 @@ import com.seaguard.ui.home.HomeViewModel;
 
 import android.location.Address;
 import android.location.Geocoder;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -121,9 +122,9 @@ public class AddReportActivity extends AppCompatActivity {
         for(int i = 0; i< stars.size(); i++) {
             int current = i;
             stars.get(i).setOnClickListener(v -> {
-                urgency = current;
+                urgency = current + 1;
                 for(int j = 0; j < stars.size(); j++) {
-                    if(j <= urgency) stars.get(j).setColorFilter(Color.YELLOW);
+                    if(j <= current) stars.get(j).setColorFilter(Color.YELLOW);
                     else stars.get(j).clearColorFilter();
                 }
             });
@@ -139,12 +140,26 @@ public class AddReportActivity extends AppCompatActivity {
                     new ReportModel(
                     "",
                     "",
-                    category.toString(),
+                    category.getText().toString(),
                     date,
-                    description.toString(),
+                    description.getText() != null ? description.getText().toString() : "",
                     urgency
                 ),
-                (docRef, e) -> {}
+                (docRef, e) -> {
+                    if(e == null) {
+                        Toast.makeText(
+                                this,
+                                "Report salvato con successo!",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        finish();
+                    }
+                    else Toast.makeText(
+                            this,
+                            "Errore nel salvataggio: " + e.getMessage(),
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
             );
         });
     }
