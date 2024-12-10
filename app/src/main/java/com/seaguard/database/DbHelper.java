@@ -1,9 +1,10 @@
 package com.seaguard.database;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.seaguard.ui.reports.ReportsViewModel;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,18 @@ public class DbHelper {
             .addOnFailureListener(callBack::accept);
     }
 
+    public static void uploadImage (byte[] imageBytes, BiConsumer<String, Exception> callBack) {
+        StorageReference imageRef = FirebaseStorage.getInstance().getReference()
+                .child("images/" + System.currentTimeMillis() + ".png");
+
+        UploadTask uploadTask = imageRef.putBytes(imageBytes);
+        uploadTask.addOnSuccessListener(
+            taskSnapshot -> {
+                imageRef.getDownloadUrl().addOnSuccessListener(path ->callBack.accept(path.toString(), null));
+            }
+        ).addOnFailureListener(e-> callBack.accept(null, e));
+    }
+
     // Tommaso
     public static void getReports(Consumer<List<ReportModel>> onSuccess, Consumer<Exception> onFailure) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -58,11 +71,5 @@ public class DbHelper {
                 })
                 .addOnFailureListener(onFailure::accept); // Callback per gestire errori
     }
-
-
-
-
-
-
 
 }

@@ -52,8 +52,6 @@ public class HomeFragment extends Fragment {
             location.runOnFirstFix(() -> {
                 requireActivity().runOnUiThread(() -> map.getController().animateTo(location.getMyLocation()));
             });
-
-            return location;
         });
 
         // FAB to open an AddReportActivity

@@ -40,8 +40,8 @@ import org.osmdroid.config.Configuration;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private final int REQUEST_PERMISSIONS = 1;
-    private final int REQUEST_TO_ENABLE_LOCATION = 2;
+    private final int REQUEST_PERMISSIONS_CODE = 1;
+    private final int REQUEST_TO_ENABLE_LOCATION_CODE = 2;
     private HomeViewModel homeViewModel;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -144,23 +144,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-  @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults.length > 0) requestToEnableGps();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TO_ENABLE_LOCATION) homeViewModel.setLocation();
-    }
-
     private void requestPermissions() {
-        if(ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     this,
                     new String[]{
@@ -168,11 +154,18 @@ public class MainActivity extends AppCompatActivity {
                             Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.INTERNET
                     },
-                    REQUEST_PERMISSIONS
+                    REQUEST_PERMISSIONS_CODE
             );
         }
         else requestToEnableGps();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults.length > 0) requestToEnableGps();
+    }
+
 
     private void requestToEnableGps () {
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -191,6 +184,12 @@ public class MainActivity extends AppCompatActivity {
                 .show();
         }
         else homeViewModel.setLocation();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TO_ENABLE_LOCATION_CODE) homeViewModel.setLocation();
     }
 
 }
