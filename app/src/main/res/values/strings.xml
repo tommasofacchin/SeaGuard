@@ -5,6 +5,7 @@
     <string name="title_explore">Scopri</string>
     <string name="title_settings">Impostazioni</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_report">Segnalazione</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Registrati o Accedi</string>
@@ -17,5 +18,9 @@
     <string name="add_report">Segnala</string>
     <string name="gps_network_not_enabled">Localizzazione non attiva</string>
     <string name="open_location_settings">Apri le impostazioni</string>
+    <string name="save">Salva</string>
     <string name="cancel">Annulla</string>
+    <string name="urgency">Pericolo</string>
+    <string name="upload_photos">Carica Foto</string>
+    <string name="menu_categories">Categoria</string>
 </resources>

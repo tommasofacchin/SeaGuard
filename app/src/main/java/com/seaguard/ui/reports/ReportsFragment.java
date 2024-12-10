@@ -16,16 +16,14 @@ public class ReportsFragment extends Fragment {
 
     private FragmentReportsBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        ReportsViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(ReportsViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ReportsViewModel reportsViewModel = new ViewModelProvider(this).get(ReportsViewModel.class);
 
         binding = FragmentReportsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        reportsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

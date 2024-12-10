@@ -16,16 +16,14 @@ public class ExploreFragment extends Fragment {
 
     private FragmentExploreBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        ExploreViewModel notificationsViewModel =
-                new ViewModelProvider(this).get(ExploreViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ExploreViewModel exploreViewModel = new ViewModelProvider(this).get(ExploreViewModel.class);
 
         binding = FragmentExploreBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textNotifications;
-        notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        exploreViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
