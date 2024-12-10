@@ -64,4 +64,6 @@ dependencies {
             implementation ("com.google.android.material:material:1.7.5")
             // OpenStreetMap
             implementation ("org.osmdroid:osmdroid-android:6.1.20")
+            implementation ("com.google.android.gms:play-services-base:<latest-version>")
+
 }

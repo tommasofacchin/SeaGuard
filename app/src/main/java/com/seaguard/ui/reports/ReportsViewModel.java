@@ -35,8 +35,7 @@ public class ReportsViewModel extends ViewModel {
     private final MutableLiveData<List<Map<String, Object>>> reportsLiveData = new MutableLiveData<>();
 
     private void fetchReports() {
-
-        CollectionReference reportsCollection = firestore.collection("reports"); // Nome della collection
+        CollectionReference reportsCollection = firestore.collection("reports");
 
         reportsCollection.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -44,20 +43,23 @@ public class ReportsViewModel extends ViewModel {
                 if (querySnapshot != null) {
                     List<Map<String, Object>> reports = new ArrayList<>();
                     querySnapshot.forEach(document -> {
-                        // Ottieni i dati come una mappa
-                        Map<String, Object> reportData = document.getData();
-                        Log.d(TAG, "Documento ricevuto: " + reportData); // Log dei dati del documento
-                        reports.add(reportData); // Aggiungi alla lista
+                        try {
+                            Map<String, Object> reportData = document.getData();
+                            Log.d(TAG, "Documento ricevuto: " + reportData);
+                            reports.add(reportData);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Errore durante l'elaborazione del documento: " + document.getId(), e);
+                        }
                     });
-                    reportsLiveData.setValue(reports); // Aggiorna LiveData
-                    Log.d(TAG, "Lista dei report aggiornata: " + reports); // Log della lista aggiornata
+                    reportsLiveData.setValue(reports);
+                    Log.d(TAG, "Lista dei report aggiornata: " + reports);
                 } else {
                     Log.w(TAG, "QuerySnapshot è null");
                 }
             } else {
                 Exception e = task.getException();
-                Log.e(TAG, "Errore nel recupero dei report", e); // Log in caso di errore
-                reportsLiveData.setValue(null); // Può essere un valore vuoto
+                Log.e(TAG, "Errore nel recupero dei report", e);
+                reportsLiveData.setValue(null);
             }
         });
     }
