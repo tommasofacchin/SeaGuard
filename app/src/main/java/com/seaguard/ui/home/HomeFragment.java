@@ -66,12 +66,46 @@ public class HomeFragment extends Fragment {
         if(homeViewModel.permissionsRequested()) homeViewModel.setLocation();
 
         return root;
+
     }
 
+    //metodi onAzione per il comportamento corretto del fragment dopo
+    //un qualsiasi evento,
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (binding != null) {
+            MapView map = binding.map;
+            GeoPoint center = (GeoPoint) map.getMapCenter();
+            outState.putDouble("latitude", center.getLatitude());
+            outState.putDouble("longitude", center.getLongitude());
+            outState.putInt("zoom", map.getZoomLevel());
+        }
+    }
+
+    //Quando il fragment torna in primo piano (ad esempio, l'utente naviga indietro).
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (binding != null) {
+            binding.map.onResume();
+        }
+    }
+
+    //Quando il fragment non è più visibile mette in pausa per risparmiare risorse
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (binding != null) {
+            binding.map.onPause();
+        }
+    }
+
+    //per evitare memoryleak imposto il binding a null, altirmenti il GC non sa che può liberare la risorsa
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-
 }

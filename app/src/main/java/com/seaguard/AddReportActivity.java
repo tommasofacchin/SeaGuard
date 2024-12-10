@@ -14,15 +14,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.seaguard.database.DbHelper;
+import com.seaguard.database.ReportModel;
 import com.seaguard.databinding.ActivityAddReportBinding;
 import com.seaguard.ui.home.HomeViewModel;
 
@@ -45,6 +43,7 @@ public class AddReportActivity extends AppCompatActivity {
     private String time;
     private String date;
     private TextInputEditText description;
+    private AutoCompleteTextView category;
     private int urgency;
 
     @SuppressLint("MissingPermission")
@@ -96,8 +95,7 @@ public class AddReportActivity extends AppCompatActivity {
         description = binding.description;
 
         // 4) Categories
-        TextInputLayout textInputLayout = binding.categories;
-        AutoCompleteTextView autoCompleteTextView = binding.autoCompleteCategories;
+        category = binding.autoCompleteCategories;
 
         List<String> items = new ArrayList<>(Arrays.asList(
                 "Rifiuti e Inquinamento",
@@ -108,7 +106,7 @@ public class AddReportActivity extends AppCompatActivity {
         ));
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
-        autoCompleteTextView.setAdapter(adapter);
+        category.setAdapter(adapter);
 
         // 5) Stars
         urgency = 0;
@@ -137,6 +135,17 @@ public class AddReportActivity extends AppCompatActivity {
 
         // 7) Save
         binding.save.setOnClickListener(v -> {
+            DbHelper.add(
+                    new ReportModel(
+                    "",
+                    "",
+                    category.toString(),
+                    date,
+                    description.toString(),
+                    urgency
+                ),
+                (docRef, e) -> {}
+            );
         });
     }
 
