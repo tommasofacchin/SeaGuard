@@ -1,6 +1,7 @@
 package com.seaguard.ui.home;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +19,24 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
+    private HomeViewModel homeViewModel;
     private MapView map;
+    private GeoPoint centerPoint;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null){
+            centerPoint = new GeoPoint(35.682839, 139.759455); // Tokyo
+        }
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -40,8 +52,14 @@ public class HomeFragment extends Fragment {
         map.setMultiTouchControls(true);
 
         MapController mapController = (MapController) map.getController();
-        mapController.setCenter(new GeoPoint(41.8902, 12.4922)); // Rome
-        mapController.setZoom(16);
+
+        homeViewModel.getCenterPoint().observe(getViewLifecycleOwner(), geoPoint -> {
+            if(geoPoint != null) mapController.setCenter(geoPoint);
+        });
+
+        homeViewModel.getZoomLevel().observe(getViewLifecycleOwner(), zoom -> {
+            if(zoom != null) mapController.setZoom(zoom);
+        });
 
         homeViewModel.setCallBack(() -> {
             //provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
@@ -49,10 +67,22 @@ public class HomeFragment extends Fragment {
             location.enableMyLocation();
             map.getOverlays().add(location);
 
-            location.runOnFirstFix(() -> {
+            if(homeViewModel.isFirstRun()) location.runOnFirstFix(() -> {
                 requireActivity().runOnUiThread(() -> map.getController().animateTo(location.getMyLocation()));
             });
         });
+
+        // MapListener Overlay
+        map.getOverlays().add(new Overlay() {
+            @Override
+            public void draw(Canvas canvas, MapView mapView, boolean shadow) {
+                super.draw(canvas, mapView, shadow);
+                homeViewModel.setCenterPoint((GeoPoint) mapView.getMapCenter());
+                homeViewModel.setZoomLevel(mapView.getZoomLevel());
+            }
+        });
+
+        if(!homeViewModel.isFirstRun()) homeViewModel.setLocation();
 
         // FAB to open an AddReportActivity
         ExtendedFloatingActionButton fab = binding.fab;
@@ -60,8 +90,6 @@ public class HomeFragment extends Fragment {
                 Intent intent = new Intent(requireActivity(), AddReportActivity.class);
                 startActivity(intent);
         });
-
-        if(homeViewModel.permissionsRequested()) homeViewModel.setLocation();
 
         return root;
 
