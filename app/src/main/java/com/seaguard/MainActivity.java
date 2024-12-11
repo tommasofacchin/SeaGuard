@@ -49,50 +49,49 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        /*FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             //reload();
-        }
+        }*/
         requestPermissions();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+            System.out.println("ONCREATEACTIVITY!!!");
+            super.onCreate(savedInstanceState);
+            // OpenStreetMap Configuration
+            Context ctx = getApplicationContext();
+            Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        // OpenStreetMap Configuration
-        Context ctx = getApplicationContext();
-        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+            binding = ActivityMainBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+            // ToolBar
+            Toolbar toolbar = binding.toolbar;
+            setSupportActionBar(toolbar);
 
-        // ToolBar
-        Toolbar toolbar = binding.toolbar;
-        setSupportActionBar(toolbar);
+            // NavBar
+            BottomNavigationView navView = binding.navView;
 
-        // NavBar
-        BottomNavigationView navView = binding.navView;
+            // Passing each menu ID as a set of Ids because each
+            // menu should be considered as top level destinations.
+            AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                    R.id.navigation_home, R.id.navigation_reports, R.id.navigation_explore, R.id.navigation_settings)
+                    .build();
+            NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            assert navHostFragment != null;
+            NavController navController = navHostFragment.getNavController();
+            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+            NavigationUI.setupWithNavController(binding.navView, navController);
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-            R.id.navigation_home, R.id.navigation_reports, R.id.navigation_explore, R.id.navigation_settings)
-            .build();
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        assert navHostFragment != null;
-        NavController navController = navHostFragment.getNavController();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(binding.navView, navController);
-
-        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+            homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
 
+            db = FirebaseFirestore.getInstance();
 
-        db = FirebaseFirestore.getInstance();
-
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+            // Initialize Firebase Auth
+            mAuth = FirebaseAuth.getInstance();
 
         /*
         Map<String, Object> user = new HashMap<>();
@@ -113,8 +112,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
          */
+    }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        System.out.println("ONSAVEISTANCESTATEDELL'ACTIVITY");
+        super.onSaveInstanceState(outState);
+        // Salva lo stato del NavController
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            NavController navController = navHostFragment.getNavController();
+            Bundle navState = navController.saveState();
+            if (navState != null) {
+                outState.putBundle("nav_state", navState);
+            }
+        }
+    }
 
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        System.out.println("ONRESTOREDELL'ACTIVITY");
+        super.onRestoreInstanceState(savedInstanceState);
+        // Ripristina lo stato del NavController
+        Bundle navState = savedInstanceState.getBundle("nav_state");
+        if (navState != null) {
+            NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            if (navHostFragment != null) {
+                NavController navController = navHostFragment.getNavController();
+                navController.restoreState(navState);
+            }
+        }
     }
 
     @Override
@@ -192,5 +219,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TO_ENABLE_LOCATION_CODE) homeViewModel.setLocation();
     }
+
+
 
 }
