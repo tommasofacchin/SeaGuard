@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
+
+
         db = FirebaseFirestore.getInstance();
 
         // Initialize Firebase Auth

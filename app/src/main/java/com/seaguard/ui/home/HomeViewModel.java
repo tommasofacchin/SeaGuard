@@ -26,4 +26,5 @@ public class HomeViewModel extends ViewModel {
     public boolean permissionsRequested() {
         return permissionsRequested;
     }
+
 }

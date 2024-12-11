@@ -1,6 +1,5 @@
 package com.seaguard.ui.home;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.seaguard.AddReportActivity;
 import com.seaguard.databinding.FragmentHomeBinding;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -44,7 +41,6 @@ public class HomeFragment extends Fragment {
         mapController.setZoom(16);
 
         homeViewModel.setCallBack(() -> {
-            //provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
             MyLocationNewOverlay location = new MyLocationNewOverlay(new GpsMyLocationProvider(map.getContext()), map);
             location.enableMyLocation();
             map.getOverlays().add(location);
@@ -52,13 +48,8 @@ public class HomeFragment extends Fragment {
             location.runOnFirstFix(() -> {
                 requireActivity().runOnUiThread(() -> map.getController().animateTo(location.getMyLocation()));
             });
-        });
 
-        // FAB to open an AddReportActivity
-        ExtendedFloatingActionButton fab = binding.fab;
-        fab.setOnClickListener(view -> {
-                Intent intent = new Intent(requireActivity(), AddReportActivity.class);
-                startActivity(intent);
+            return location;
         });
 
         if(homeViewModel.permissionsRequested()) homeViewModel.setLocation();
