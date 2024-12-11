@@ -21,6 +21,7 @@
     <string name="save">Salva</string>
     <string name="cancel">Annulla</string>
     <string name="urgency">Pericolo</string>
-    <string name="upload_photos">Carica Foto</string>
+    <string name="upload_photos">Carica</string>
     <string name="menu_categories">Categoria</string>
+    <string name="upload_photo_status">Nessuna foto</string>
 </resources>

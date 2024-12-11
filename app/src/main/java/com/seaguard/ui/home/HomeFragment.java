@@ -1,9 +1,12 @@
 package com.seaguard.ui.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -39,38 +42,34 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         /*
             System.out.println("ONCREATEFRAGMENT!!!!");
             if(savedInstanceState==null) {
                 System.out.println("BBB");
          */
-                HomeViewModel homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        HomeViewModel homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
-                binding = FragmentHomeBinding.inflate(inflater, container, false);
-                View root = binding.getRoot();
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
 
-                // Map
-                map = binding.map;
-                map.setTileSource(TileSourceFactory.MAPNIK);
-                map.setBuiltInZoomControls(false);
-                map.setMultiTouchControls(true);
+        // Map
+        map = binding.map;
+        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setBuiltInZoomControls(false);
+        map.setMultiTouchControls(true);
 
-                /*
-                MapController mapController = (MapController) map.getController();
-                mapController.setCenter(new GeoPoint(41.8902, 12.4922)); // Rome
-                mapController.setZoom(16);
-                 */
+        /*
+        MapController mapController = (MapController) map.getController();
+        mapController.setCenter(new GeoPoint(41.8902, 12.4922)); // Rome
+        mapController.setZoom(16);
+         */
 
         MapController mapController = (MapController) map.getController();
-
-        homeViewModel.getCenterPoint().observe(getViewLifecycleOwner(), geoPoint -> {
-            if(geoPoint != null) mapController.setCenter(geoPoint);
-        });
-
-        homeViewModel.getZoomLevel().observe(getViewLifecycleOwner(), zoom -> {
-            if(zoom != null) mapController.setZoom(zoom);
-        });
+        map.setMinZoomLevel(3.5);
+        mapController.setCenter(homeViewModel.getCenterPoint());
+        mapController.setZoom(homeViewModel.getZoomLevel());
 
         homeViewModel.setCallBack(() -> {
             //provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
@@ -83,14 +82,12 @@ public class HomeFragment extends Fragment {
             });
         });
 
-        // MapListener Overlay
-        map.getOverlays().add(new Overlay() {
-            @Override
-            public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-                super.draw(canvas, mapView, shadow);
-                homeViewModel.setCenterPoint((GeoPoint) mapView.getMapCenter());
-                homeViewModel.setZoomLevel(mapView.getZoomLevel());
+        map.setOnTouchListener((v, event) -> {
+            if(event.getAction() == MotionEvent.ACTION_UP) {
+                homeViewModel.setCenterPoint((GeoPoint) map.getMapCenter());
+                homeViewModel.setZoomLevel(map.getZoomLevel());
             }
+            return false;
         });
 
         if(!homeViewModel.isFirstRun()) homeViewModel.setLocation();

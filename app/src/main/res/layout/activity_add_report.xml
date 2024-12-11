@@ -50,6 +50,7 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin">
 
                 <ImageView
+                    app:tint="?attr/colorOnPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/location" />
@@ -77,6 +78,7 @@
 
                 <!-- Separator -->
                 <ImageView
+                    app:tint="?attr/colorOnPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/clock" />
@@ -98,6 +100,7 @@
 
                 <!-- Date -->
                 <ImageView
+                    app:tint="?attr/colorOnPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/calendar" />
@@ -118,9 +121,13 @@
                 android:layout_height="wrap_content"
                 app:hintEnabled="true"
                 app:hintAnimationEnabled="true"
-                app:boxStrokeColor="@android:color/black"
+                app:boxStrokeColor="?attr/colorOnPrimary"
                 app:boxBackgroundMode="outline"
                 app:hintTextColor="@color/purple_500"
+                app:boxCornerRadiusTopStart="@dimen/radius"
+                app:boxCornerRadiusTopEnd="@dimen/radius"
+                app:boxCornerRadiusBottomStart="@dimen/radius"
+                app:boxCornerRadiusBottomEnd="@dimen/radius"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
@@ -145,8 +152,12 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="true"
                 app:hintAnimationEnabled="true"
-                app:boxStrokeColor="@android:color/black"
+                app:boxStrokeColor="?attr/colorOnPrimary"
                 app:hintTextColor="@color/purple_500"
+                app:boxCornerRadiusTopStart="@dimen/radius"
+                app:boxCornerRadiusTopEnd="@dimen/radius"
+                app:boxCornerRadiusBottomStart="@dimen/radius"
+                app:boxCornerRadiusBottomEnd="@dimen/radius"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
@@ -186,6 +197,7 @@
                     android:gravity="center">
 
                     <ImageView
+                        app:tint="?attr/colorOnPrimary"
                         android:id="@+id/star1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -193,6 +205,7 @@
                         android:paddingEnd="3dp"
                         android:src="@drawable/star" />
                     <ImageView
+                        app:tint="?attr/colorOnPrimary"
                         android:id="@+id/star2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -200,6 +213,7 @@
                         android:paddingEnd="3dp"
                         android:src="@drawable/star" />
                     <ImageView
+                        app:tint="?attr/colorOnPrimary"
                         android:id="@+id/star3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -207,6 +221,7 @@
                         android:paddingEnd="3dp"
                         android:src="@drawable/star" />
                     <ImageView
+                        app:tint="?attr/colorOnPrimary"
                         android:id="@+id/star4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -214,6 +229,7 @@
                         android:paddingEnd="3dp"
                         android:src="@drawable/star" />
                     <ImageView
+                        app:tint="?attr/colorOnPrimary"
                         android:id="@+id/star5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -235,6 +251,7 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin">
 
                 <ImageView
+                    app:tint="?attr/colorOnPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/image" />
@@ -243,7 +260,7 @@
                     android:id="@+id/photos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="Nessuna foto allegata"
+                    android:hint="@string/upload_photo_status"
                     android:layout_marginStart="8dp" />
 
                 <Button
@@ -251,6 +268,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/upload_photos"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:layout_marginStart="16dp" />
             </LinearLayout>
 
