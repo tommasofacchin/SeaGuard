@@ -70,6 +70,7 @@ public class AddReportActivity extends AppCompatActivity {
 
     @SuppressLint("MissingPermission")
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -147,7 +148,7 @@ public class AddReportActivity extends AppCompatActivity {
             stars.get(i).setOnClickListener(v -> {
                 urgency = current + 1;
                 for(int j = 0; j < stars.size(); j++) {
-                    if(j <= current) stars.get(j).setColorFilter(Color.YELLOW);
+                    if(j <= current) stars.get(j).setColorFilter(Color.BLUE);
                     else stars.get(j).clearColorFilter();
                 }
             });
@@ -263,6 +264,7 @@ public class AddReportActivity extends AppCompatActivity {
                 }
         );
     }
+
 
     private void requestPermissions() {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)

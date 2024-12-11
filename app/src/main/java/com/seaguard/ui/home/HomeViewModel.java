@@ -49,4 +49,5 @@ public class HomeViewModel extends ViewModel {
     public void setZoomLevel(int zoom) {
         zoomLevel.setValue(zoom);
     }
+
 }
