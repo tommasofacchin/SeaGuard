@@ -51,6 +51,23 @@ public class DbHelper {
         ).addOnFailureListener(e-> callBack.accept(null, e));
     }
 
+    public static void getCategories (BiConsumer<List<CategoryModel>, Exception> callBack) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("categories")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<CategoryModel> elems = new ArrayList<>();
+                    querySnapshot.forEach(document -> {
+                        CategoryModel elem = new CategoryModel(document.getData());
+                        elem.setId(document.getId());
+                        elems.add(elem);
+                    });
+                    callBack.accept(elems, null);
+                })
+                .addOnFailureListener(e -> callBack.accept(null, e));
+    }
+
     // Tommaso
     public static void getReports(Consumer<List<ReportModel>> onSuccess, Consumer<Exception> onFailure) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();

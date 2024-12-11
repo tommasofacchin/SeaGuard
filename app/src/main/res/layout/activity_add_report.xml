@@ -76,7 +76,7 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginBottom="@dimen/activity_vertical_margin">
 
-                <!-- Separator -->
+                <!-- Time -->
                 <ImageView
                     app:tint="?attr/colorOnPrimary"
                     android:layout_width="wrap_content"
@@ -168,6 +168,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/menu_categories"
+                    android:padding="5dp"
                     android:inputType="none"
                     android:backgroundTint="@android:color/transparent" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -262,6 +263,12 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/upload_photo_status"
                     android:layout_marginStart="8dp" />
+
+                <!-- Separator -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <Button
                     android:id="@+id/uploadPhotos"

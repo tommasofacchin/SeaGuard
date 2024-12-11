@@ -29,6 +29,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.DocumentReference;
+import com.seaguard.database.CategoryModel;
 import com.seaguard.database.DbHelper;
 import com.seaguard.database.ReportModel;
 import com.seaguard.databinding.ActivityAddReportBinding;
@@ -53,6 +54,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class AddReportActivity extends AppCompatActivity {
     private String locationName;
@@ -70,7 +72,6 @@ public class AddReportActivity extends AppCompatActivity {
 
     @SuppressLint("MissingPermission")
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -90,20 +91,21 @@ public class AddReportActivity extends AppCompatActivity {
         // 1) Location Name
         locationName = "";
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                // Got last known location. In some rare situations this can be null.
-                if(location != null) {
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            // Got last known location. In some rare situations this can be null.
+            if(location != null) {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
 
-                    try {
-                        locationName = getLocationDetails(latitude, longitude).get("locality");
-                        binding.locationName.setText(locationName);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    locationName = getLocationDetails(latitude, longitude).get("locality");
+                    binding.locationName.setText(locationName);
+                } catch (IOException e) {
+                    Toast.makeText(
+                        this,
+                        "Impossibile rilevare la posizione!",
+                        Toast.LENGTH_SHORT
+                    ).show();
                 }
             }
         });
@@ -122,16 +124,18 @@ public class AddReportActivity extends AppCompatActivity {
         // 4) Categories
         category = binding.autoCompleteCategories;
 
-        List<String> items = new ArrayList<>(Arrays.asList(
-                "Rifiuti e Inquinamento",
-                "Fauna Marina",
-                "Scorie",
-                "Sostanze Chimiche",
-                "Altro"
-        ));
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
-        category.setAdapter(adapter);
+        DbHelper.getCategories((categories, e) -> {
+            if(categories != null && e == null) {
+                List<String> items = categories.stream().map(CategoryModel::getCategory).collect(Collectors.toList());
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
+                category.setAdapter(adapter);
+            }
+            else Toast.makeText(
+                    this,
+                    "Impossibile caricare le categorie: " + e.getMessage(),
+                    Toast.LENGTH_SHORT
+            ).show();
+        });
 
         // 5) Stars
         urgency = 0;
@@ -143,7 +147,7 @@ public class AddReportActivity extends AppCompatActivity {
                 binding.star5
         ));
 
-        for(int i = 0; i< stars.size(); i++) {
+        for(int i = 0; i < stars.size(); i++) {
             int current = i;
             stars.get(i).setOnClickListener(v -> {
                 urgency = current + 1;

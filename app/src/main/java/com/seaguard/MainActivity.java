@@ -58,40 +58,41 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-            System.out.println("ONCREATEACTIVITY!!!");
-            super.onCreate(savedInstanceState);
-            // OpenStreetMap Configuration
-            Context ctx = getApplicationContext();
-            Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        System.out.println("ONCREATEACTIVITY!!!");
+        super.onCreate(savedInstanceState);
 
-            binding = ActivityMainBinding.inflate(getLayoutInflater());
-            setContentView(binding.getRoot());
+        // OpenStreetMap Configuration
+        Context ctx = getApplicationContext();
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-            // ToolBar
-            Toolbar toolbar = binding.toolbar;
-            setSupportActionBar(toolbar);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-            // NavBar
-            BottomNavigationView navView = binding.navView;
+        // ToolBar
+        Toolbar toolbar = binding.toolbar;
+        setSupportActionBar(toolbar);
 
-            // Passing each menu ID as a set of Ids because each
-            // menu should be considered as top level destinations.
-            AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.navigation_home, R.id.navigation_reports, R.id.navigation_explore, R.id.navigation_settings)
-                    .build();
-            NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-            assert navHostFragment != null;
-            NavController navController = navHostFragment.getNavController();
-            NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-            NavigationUI.setupWithNavController(binding.navView, navController);
+        // NavBar
+        BottomNavigationView navView = binding.navView;
 
-            homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_reports, R.id.navigation_explore, R.id.navigation_settings)
+                .build();
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        assert navHostFragment != null;
+        NavController navController = navHostFragment.getNavController();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.navView, navController);
+
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
 
-            db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-            // Initialize Firebase Auth
-            mAuth = FirebaseAuth.getInstance();
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
 
         /*
         Map<String, Object> user = new HashMap<>();
@@ -219,7 +220,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TO_ENABLE_LOCATION_CODE) homeViewModel.setLocation();
     }
-
 
 
 }
