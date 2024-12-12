@@ -8,50 +8,47 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class DbHelper {
 
-    public static void add (DbModel elem, BiConsumer<DocumentReference, Exception> callBack) {
+    public static void add (DbModel elem, Consumer<DocumentReference> onSuccess, Consumer<Exception> onFailure) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(elem.getCollectionPath())
             .add(elem.toMap())
-            .addOnSuccessListener(docRef -> callBack.accept(docRef, null))
-            .addOnFailureListener(e -> callBack.accept(null, e));
+            .addOnSuccessListener(onSuccess::accept)
+            .addOnFailureListener(onFailure::accept);
     }
 
-    public static void update (DbModel elem, Consumer<Exception> callBack) {
+    public static void update (DbModel elem, Consumer<Exception> onFailure) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(elem.getCollectionPath())
             .document(elem.getId())
             .set(elem.toMap())
-            .addOnSuccessListener(unused -> callBack.accept(null))
-            .addOnFailureListener(callBack::accept);
+            .addOnFailureListener(onFailure::accept);
     }
 
-    public static void delete (DbModel elem, Consumer<Exception> callBack) {
+    public static void delete (DbModel elem, Consumer<Exception> onFailure) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(elem.getCollectionPath())
             .document(elem.getId())
             .delete()
-            .addOnSuccessListener(unused -> callBack.accept(null))
-            .addOnFailureListener(callBack::accept);
+            .addOnFailureListener(onFailure::accept);
     }
 
-    public static void uploadImage (byte[] imageBytes, BiConsumer<String, Exception> callBack) {
+    public static void uploadImage (byte[] imageBytes, Consumer<String> onSuccess, Consumer<Exception> onFailure) {
         StorageReference imageRef = FirebaseStorage.getInstance().getReference()
                 .child("images/" + System.currentTimeMillis() + ".png");
 
         UploadTask uploadTask = imageRef.putBytes(imageBytes);
         uploadTask.addOnSuccessListener(
             taskSnapshot -> {
-                imageRef.getDownloadUrl().addOnSuccessListener(path ->callBack.accept(path.toString(), null));
+                imageRef.getDownloadUrl().addOnSuccessListener(path -> onSuccess.accept(path.toString()));
             }
-        ).addOnFailureListener(e-> callBack.accept(null, e));
+        ).addOnFailureListener(onFailure::accept);
     }
 
-    public static void getCategories (BiConsumer<List<CategoryModel>, Exception> callBack) {
+    public static void getCategories (Consumer<List<CategoryModel>> onSuccess, Consumer<Exception> onFailure) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("categories")
@@ -63,9 +60,9 @@ public class DbHelper {
                         elem.setId(document.getId());
                         elems.add(elem);
                     });
-                    callBack.accept(elems, null);
+                    onSuccess.accept(elems);
                 })
-                .addOnFailureListener(e -> callBack.accept(null, e));
+                .addOnFailureListener(onFailure::accept);
     }
 
     // Tommaso

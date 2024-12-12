@@ -2,7 +2,6 @@ package com.seaguard.database;
 
 import java.util.Map;
 import java.util.HashMap;
-import android.graphics.Bitmap;
 
 public class ReportModel implements DbModel{
 
@@ -11,19 +10,19 @@ public class ReportModel implements DbModel{
     private String idArea;
     private double latitude;
     private double longitude;
-    private String idCategorie;
+    private String category;
     private String time;
     private String date;
     private String description;
     private int urgency;
     private String image;
 
-    public ReportModel(String idUser, String idArea, double latitude, double longitude, String idCategorie, String time, String date, String description, int urgency, String image) {
+    public ReportModel(String idUser, String idArea, double latitude, double longitude, String category, String time, String date, String description, int urgency, String image) {
         this.idUser = idUser;
         this.idArea = idArea;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.idCategorie = idCategorie;
+        this.category = category;
         this.time = time;
         this.date = date;
         this.description = description;
@@ -31,6 +30,7 @@ public class ReportModel implements DbModel{
         this.image = image;
     }
     public ReportModel(Map<String, Object> report) {
+        /*
         this.idReport = (String) report.get("idReport");
         this.idUser = (String) report.get("idUser");
         this.idArea = (String) report.get("idArea");
@@ -42,6 +42,18 @@ public class ReportModel implements DbModel{
         this.description = (String) report.get("description");
         this.urgency = (int) report.get("urgency");
         this.image = (String) report.get("image");
+         */
+        this.idReport = report.get("idReport") instanceof String ? (String) report.get("idReport") : "";
+        this.idUser = report.get("idUser") instanceof String ? (String) report.get("idUser") : "";
+        this.idArea = report.get("idArea") instanceof String ? (String) report.get("idArea") : "";
+        this.latitude = report.get("latitude") instanceof Double? (double) report.get("latitude") : 0.0;
+        this.longitude = report.get("longitude") instanceof Double? (double) report.get("longitude") : 0.0;
+        this.category = report.get("idCategorie") instanceof String ? (String) report.get("idCategorie") : "";
+        this.time = report.get("time") instanceof String ? (String) report.get("time") : "";
+        this.date = report.get("date") instanceof String ? (String) report.get("date") : "";
+        this.description = report.get("description") instanceof String ? (String) report.get("description") : "";
+        this.urgency = report.get("urgency") instanceof Integer? (int) ((long) report.get("urgency")) : 0;
+        this.image = report.get("image") instanceof String ? (String) report.get("image") : "";
     }
 
     @Override
@@ -65,7 +77,7 @@ public class ReportModel implements DbModel{
         map.put("idArea", idArea);
         map.put("latitude", latitude);
         map.put("longitude", longitude);
-        map.put("idCategorie", idCategorie);
+        map.put("category", category);
         map.put("urgency", urgency);
         map.put("time", time);
         map.put("date", date);
@@ -89,8 +101,8 @@ public class ReportModel implements DbModel{
         return longitude;
     }
 
-    public String getIdCategorie() {
-        return idCategorie;
+    public String getCategory() {
+        return category;
     }
 
     public String getTime() {
@@ -133,8 +145,8 @@ public class ReportModel implements DbModel{
         this.longitude = longitude;
     }
 
-    public void setIdCategorie(String idCategorie) {
-        this.idCategorie = idCategorie;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public void setTime(String time) {

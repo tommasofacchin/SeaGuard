@@ -2,20 +2,25 @@ package com.seaguard.ui.home;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.seaguard.AddReportActivity;
+import com.seaguard.R;
+import com.seaguard.database.DbHelper;
+import com.seaguard.database.ReportModel;
 import com.seaguard.databinding.FragmentHomeBinding;
 
 import org.osmdroid.api.IGeoPoint;
@@ -23,23 +28,18 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Overlay;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
-    private HomeViewModel homeViewModel;
     private MapView map;
-    private GeoPoint centerPoint;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState != null){
-            centerPoint = new GeoPoint(35.682839, 139.759455); // Tokyo
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -91,6 +91,7 @@ public class HomeFragment extends Fragment {
         });
 
         if(!homeViewModel.isFirstRun()) homeViewModel.setLocation();
+        addReportIcons();
 
         // FAB to open an AddReportActivity
         ExtendedFloatingActionButton fab = binding.fab;
@@ -178,6 +179,39 @@ public class HomeFragment extends Fragment {
         System.out.println("ONDESTROYVIEWfragment");
         super.onDestroyView();
         binding = null;
+    }
+
+    private void addReportIcons () {
+        DbHelper.getReports(
+                (reports) -> {
+                    for(ReportModel elem : reports) {
+                        // Icon
+                        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.location);
+                        icon.setColorFilter(Color.parseColor("#FF4F378B"), PorterDuff.Mode.SRC_IN);
+
+                        // Marker
+                        Marker m = new Marker(map);
+                        m.setPosition(new GeoPoint(elem.getLatitude(), elem.getLongitude()));
+                        m.setTitle(elem.getCategory()); // Set the title
+                        m.setSnippet(elem.getDescription()); // Set the snippet (optional)
+                        m.setIcon(icon);
+                        m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_TOP);
+
+                        /*
+                        m.setOnMarkerClickListener((marker, mapView) -> {
+                            // Open Report Page
+                            return true;
+                        });
+                         */
+
+                        // Add the marker to the map
+                        map.getOverlays().add(m);
+                    }
+                },
+                (e) -> {
+                    // TODO
+                }
+        );
     }
 
 }

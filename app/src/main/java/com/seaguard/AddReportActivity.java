@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -124,18 +125,18 @@ public class AddReportActivity extends AppCompatActivity {
         // 4) Categories
         category = binding.autoCompleteCategories;
 
-        DbHelper.getCategories((categories, e) -> {
-            if(categories != null && e == null) {
-                List<String> items = categories.stream().map(CategoryModel::getCategory).collect(Collectors.toList());
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
-                category.setAdapter(adapter);
-            }
-            else Toast.makeText(
-                    this,
-                    "Impossibile caricare le categorie: " + e.getMessage(),
-                    Toast.LENGTH_SHORT
-            ).show();
-        });
+        DbHelper.getCategories(
+                (categories) -> {
+                    List<String> items = categories.stream().map(CategoryModel::getCategory).collect(Collectors.toList());
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
+                    category.setAdapter(adapter);
+                },
+                (e) -> Toast.makeText(
+                        this,
+                        "Impossibile caricare le categorie: " + e.getMessage(),
+                        Toast.LENGTH_SHORT
+                ).show()
+        );
 
         // 5) Stars
         urgency = 0;
@@ -198,33 +199,44 @@ public class AddReportActivity extends AppCompatActivity {
                     ""
             );
 
-           BiConsumer<DocumentReference, Exception> callBack = (docRef, e) -> {
-                if(e == null) {
-                    Toast.makeText(
-                            this,
-                            "Report salvato con successo!",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                    finish();
-                }
-                else Toast.makeText(
+           Consumer<DocumentReference> onSuccess = docRef -> {
+                Toast.makeText(
+                        this,
+                        "Report salvato con successo!",
+                        Toast.LENGTH_SHORT
+                ).show();
+                finish();
+            };
+
+           Consumer<Exception> onFailure = e -> {
+               Toast.makeText(
                         this,
                         "Errore nel salvataggio: " + e.getMessage(),
                         Toast.LENGTH_SHORT
                 ).show();
-            };
+           };
 
             if(bitmapImage != null) {
                 uploadImage(
                         bitmapImage,
-                        (imgPath) -> {
+                        imgPath -> {
                             elem.setImage(imgPath);
-                            DbHelper.add(elem, callBack);
+                            DbHelper.add(elem, onSuccess, onFailure);
                         }
                 );
             }
-            else DbHelper.add(elem, callBack);
+            else DbHelper.add(elem, onSuccess, onFailure);
         });
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @NonNull
@@ -258,14 +270,12 @@ public class AddReportActivity extends AppCompatActivity {
 
         DbHelper.uploadImage(
                 data,
-                (imgPath, e) -> {
-                    if(imgPath != null && e == null) callBack.accept(imgPath);
-                    else Toast.makeText(
-                        this,
-                        "Errore durante il salvataggio dell'immagine!",
-                        Toast.LENGTH_SHORT
-                    ).show();
-                }
+                callBack,
+                e -> Toast.makeText(
+                    this,
+                    "Errore durante il salvataggio dell'immagine!",
+                    Toast.LENGTH_SHORT
+                ).show()
         );
     }
 
