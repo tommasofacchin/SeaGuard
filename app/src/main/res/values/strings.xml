@@ -8,10 +8,10 @@
     <string name="title_report">Segnalazione</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Registrati o Accedi</string>
+    <string name="action_sign_in">Accedi</string>
     <string name="action_sign_in_short">Accedi</string>
     <string name="action_search">Cerca</string>
-    <string name="welcome">"Benvenuto"</string>
+    <string name="welcome">"Benvenuto in SeaGuard"</string>
     <string name="invalid_username">Username non valido!</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login fallito"</string>

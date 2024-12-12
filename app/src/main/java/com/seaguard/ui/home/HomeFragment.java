@@ -183,7 +183,7 @@ public class HomeFragment extends Fragment {
 
     private void addReportIcons () {
         DbHelper.getReports(
-                (reports) -> {
+                reports -> {
                     for(ReportModel elem : reports) {
                         // Icon
                         Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.location);
@@ -208,7 +208,7 @@ public class HomeFragment extends Fragment {
                         map.getOverlays().add(m);
                     }
                 },
-                (e) -> {
+                e -> {
                     // TODO
                 }
         );

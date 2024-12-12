@@ -1,8 +1,6 @@
 package com.seaguard.ui.home;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import org.osmdroid.util.GeoPoint;

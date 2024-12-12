@@ -48,7 +48,7 @@ public class ReportModel implements DbModel{
         this.idArea = report.get("idArea") instanceof String ? (String) report.get("idArea") : "";
         this.latitude = report.get("latitude") instanceof Double? (double) report.get("latitude") : 0.0;
         this.longitude = report.get("longitude") instanceof Double? (double) report.get("longitude") : 0.0;
-        this.category = report.get("idCategorie") instanceof String ? (String) report.get("idCategorie") : "";
+        this.category = report.get("category") instanceof String ? (String) report.get("category") : "";
         this.time = report.get("time") instanceof String ? (String) report.get("time") : "";
         this.date = report.get("date") instanceof String ? (String) report.get("date") : "";
         this.description = report.get("description") instanceof String ? (String) report.get("description") : "";

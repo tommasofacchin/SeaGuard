@@ -28,32 +28,35 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.seaguard.databinding.ActivityMainBinding;
 
 import com.seaguard.ui.home.HomeViewModel;
 
 import org.osmdroid.config.Configuration;
 
+/*
+    --- LOGIN ---
+email:      info@seaguard.com
+password:   testSeaGuardAuth.2024
+ */
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private final int REQUEST_PERMISSIONS_CODE = 1;
     private final int REQUEST_TO_ENABLE_LOCATION_CODE = 2;
     private HomeViewModel homeViewModel;
-    private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
 
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        /*FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            //reload();
-        }*/
-        requestPermissions();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else requestPermissions();
     }
 
     @Override
@@ -88,31 +91,6 @@ public class MainActivity extends AppCompatActivity {
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
-
-        db = FirebaseFirestore.getInstance();
-
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-
-        /*
-        Map<String, Object> user = new HashMap<>();
-        user.put("name", "Tommaso");
-        user.put("surname", "Facchin");
-        user.put("age", 22);
-
-
-        db.collection("users").add(user).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(getApplicationContext(), "success", Toast.LENGTH_LONG).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Failure", Toast.LENGTH_LONG).show();
-            }
-        });
-         */
     }
 
     @Override
