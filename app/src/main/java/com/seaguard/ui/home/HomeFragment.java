@@ -17,13 +17,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.seaguard.AddReportActivity;
 import com.seaguard.R;
 import com.seaguard.database.DbHelper;
 import com.seaguard.database.ReportModel;
 import com.seaguard.databinding.FragmentHomeBinding;
 
-import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
@@ -35,6 +33,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
+    private HomeViewModel homeViewModel;
     private MapView map;
 
     @Override
@@ -49,7 +48,7 @@ public class HomeFragment extends Fragment {
             if(savedInstanceState==null) {
                 System.out.println("BBB");
          */
-        HomeViewModel homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -89,9 +88,6 @@ public class HomeFragment extends Fragment {
             }
             return false;
         });
-
-        if(!homeViewModel.isFirstRun()) homeViewModel.setLocation();
-        addReportIcons();
 
         // FAB to open an AddReportActivity
         ExtendedFloatingActionButton fab = binding.fab;
@@ -139,15 +135,24 @@ public class HomeFragment extends Fragment {
 
 
     @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(!homeViewModel.isFirstRun()) homeViewModel.setLocation();
+        addReportIcons();
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         System.out.println("ONSAVEINSTANCESTATEfragment");
         super.onSaveInstanceState(outState);
 
+        /*
         IGeoPoint center = map.getMapCenter();
         outState.putDouble("latitude", center.getLatitudeE6() / 1e6);
         outState.putDouble("longitude", center.getLongitudeE6() / 1e6);
 
         outState.putInt("zoom_level", map.getZoomLevel());
+         */
 
     }
 

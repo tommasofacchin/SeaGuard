@@ -30,6 +30,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.seaguard.databinding.ActivityMainBinding;
 
+import com.seaguard.ui.auth.LoginActivity;
 import com.seaguard.ui.home.HomeViewModel;
 
 import org.osmdroid.config.Configuration;

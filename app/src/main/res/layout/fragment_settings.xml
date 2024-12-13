@@ -6,17 +6,91 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsFragment">
 
-    <TextView
-        android:id="@+id/text_settings"
+    <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical">
+
+        <!-- Profile -->
+        <LinearLayout
+            android:id="@+id/profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:id="@+id/iconProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="@string/title_profile"
+                android:src="@drawable/user" />
+
+            <TextView
+                android:id="@+id/textViewProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_profile"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <!-- Notifications -->
+        <LinearLayout
+            android:id="@+id/notifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:id="@+id/iconNotifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="@string/title_notifications"
+                android:src="@drawable/bell" />
+
+            <TextView
+                android:id="@+id/textViewNotifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_notifications"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <!-- Info -->
+        <LinearLayout
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:id="@+id/iconInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="@string/title_info"
+                android:src="@drawable/infocircle" />
+
+            <TextView
+                android:id="@+id/textViewInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_info"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,9 @@
     <string name="title_settings">Impostazioni</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_report">Segnalazione</string>
+    <string name="title_profile">Profilo</string>
+    <string name="title_notifications">Notifiche</string>
+    <string name="title_info">Informazioni</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Accedi</string>
@@ -23,5 +26,6 @@
     <string name="urgency">Pericolo</string>
     <string name="upload_photos">Carica</string>
     <string name="menu_categories">Categoria</string>
+    <string name="menu_nationalities">Nazionalità</string>
     <string name="upload_photo_status">Nessuna foto</string>
 </resources>

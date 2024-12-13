@@ -5,7 +5,7 @@
     android:id="@+id/add_report"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddReportActivity">
+    tools:context=".ui.home.AddReportActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

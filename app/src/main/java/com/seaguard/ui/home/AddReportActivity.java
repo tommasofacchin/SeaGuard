@@ -1,4 +1,4 @@
-package com.seaguard;
+package com.seaguard.ui.home;
 
 import android.Manifest;
 
@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.location.Location;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,7 +26,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,7 +34,6 @@ import com.seaguard.database.CategoryModel;
 import com.seaguard.database.DbHelper;
 import com.seaguard.database.ReportModel;
 import com.seaguard.databinding.ActivityAddReportBinding;
-import com.seaguard.ui.home.HomeViewModel;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -55,7 +52,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 

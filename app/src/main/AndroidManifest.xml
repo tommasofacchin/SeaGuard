@@ -23,10 +23,14 @@
         android:theme="@style/Theme.SeaGuard"
         tools:targetApi="31">
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.auth.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".AddReportActivity"
+            android:name=".ui.settings.ProfileActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ui.home.AddReportActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity

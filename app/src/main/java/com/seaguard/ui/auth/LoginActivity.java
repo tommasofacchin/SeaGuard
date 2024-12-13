@@ -1,4 +1,4 @@
-package com.seaguard;
+package com.seaguard.ui.auth;
 
 import android.os.Bundle;
 import android.util.Patterns;
