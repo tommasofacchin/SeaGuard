@@ -6,9 +6,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.seaguard.database.DbHelper;
+import com.seaguard.database.ReportModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,19 +22,17 @@ public class ReportsViewModel extends ViewModel {
 
     private static final String TAG = "ReportsViewModel";
     private final MutableLiveData<String> mText;
-    private final FirebaseFirestore firestore;
+    private MutableLiveData<List<ReportModel>> reports = new MutableLiveData<>();
 
     public ReportsViewModel() {
-        firestore = FirebaseFirestore.getInstance();
         mText = new MutableLiveData<>();
         mText.setValue("Segnalazioni");
-        fetchReports();
+
+        reports = new MutableLiveData<>();
+        loadReports();
     }
 
-    public LiveData<String> getText() {
-        return mText;
-    }
-
+    /*
     private final MutableLiveData<List<Map<String, Object>>> reportsLiveData = new MutableLiveData<>();
 
     private void fetchReports() {
@@ -66,6 +67,19 @@ public class ReportsViewModel extends ViewModel {
 
     public LiveData<List<Map<String, Object>>> getReports() {
         return reportsLiveData;
+    }
+     */
+
+    public LiveData<List<ReportModel>> getReports() {
+       return reports;
+    }
+
+    public void loadReports () {
+        DbHelper.getReports(
+                FirebaseAuth.getInstance().getUid(),
+                reports::setValue,
+                (e) -> {}
+        );
     }
 
 }

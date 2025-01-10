@@ -1,58 +1,53 @@
 package com.seaguard.database;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+import com.google.firebase.Timestamp;
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
 
-public class ReportModel implements DbModel{
+public class ReportModel implements DbModel, Parcelable {
 
     private String idReport;
     private String idUser;
-    private String idArea;
+    private String area;
     private double latitude;
     private double longitude;
     private String category;
-    private String time;
-    private String date;
+    private Timestamp timestamp;
     private String description;
     private int urgency;
     private String image;
 
-    public ReportModel(String idUser, String idArea, double latitude, double longitude, String category, String time, String date, String description, int urgency, String image) {
+    public ReportModel(String idUser, String area, double latitude, double longitude, String category, Timestamp timestamp, String description, int urgency, String image) {
         this.idUser = idUser;
-        this.idArea = idArea;
+        this.area = area;
         this.latitude = latitude;
         this.longitude = longitude;
         this.category = category;
-        this.time = time;
-        this.date = date;
+        this.timestamp = timestamp;
         this.description = description;
         this.urgency = urgency;
         this.image = image;
     }
-    public ReportModel(Map<String, Object> report) {
-        /*
-        this.idReport = (String) report.get("idReport");
-        this.idUser = (String) report.get("idUser");
-        this.idArea = (String) report.get("idArea");
-        this.latitude = (double) report.get("latitude");
-        this.longitude = (double) report.get("longitude");
-        this.idCategorie = (String) report.get("idCategorie");
-        this.time = (String) report.get("time");
-        this.date = (String) report.get("date");
-        this.description = (String) report.get("description");
-        this.urgency = (int) report.get("urgency");
-        this.image = (String) report.get("image");
-         */
-        this.idReport = report.get("idReport") instanceof String ? (String) report.get("idReport") : "";
+
+    public ReportModel(String id, Map<String, Object> report) {
+        this.idReport = id;
         this.idUser = report.get("idUser") instanceof String ? (String) report.get("idUser") : "";
-        this.idArea = report.get("idArea") instanceof String ? (String) report.get("idArea") : "";
+        this.area = report.get("area") instanceof String ? (String) report.get("area") : "";
         this.latitude = report.get("latitude") instanceof Double? (double) report.get("latitude") : 0.0;
         this.longitude = report.get("longitude") instanceof Double? (double) report.get("longitude") : 0.0;
         this.category = report.get("category") instanceof String ? (String) report.get("category") : "";
-        this.time = report.get("time") instanceof String ? (String) report.get("time") : "";
-        this.date = report.get("date") instanceof String ? (String) report.get("date") : "";
+        this.timestamp = report.get("timestamp") instanceof Timestamp ? (Timestamp) report.get("timestamp") : null;
         this.description = report.get("description") instanceof String ? (String) report.get("description") : "";
-        this.urgency = report.get("urgency") instanceof Integer? (int) ((long) report.get("urgency")) : 0;
+        this.urgency = report.get("urgency") instanceof Long ? ((Long) report.get("urgency")).intValue() : 0;
         this.image = report.get("image") instanceof String ? (String) report.get("image") : "";
     }
 
@@ -68,19 +63,14 @@ public class ReportModel implements DbModel{
 
     @Override
     public Map<String, Object> toMap() {
-
-        //return Collections.emptyMap();
-
         Map<String, Object> map = new HashMap<>();
-        map.put("idReport", idReport);
         map.put("idUser", idUser);
-        map.put("idArea", idArea);
+        map.put("area", area);
         map.put("latitude", latitude);
         map.put("longitude", longitude);
         map.put("category", category);
         map.put("urgency", urgency);
-        map.put("time", time);
-        map.put("date", date);
+        map.put("timestamp", timestamp);
         map.put("description", description);
         map.put("image", image);
         return map;
@@ -89,8 +79,8 @@ public class ReportModel implements DbModel{
         return idUser;
     }
 
-    public String getIdArea() {
-        return idArea;
+    public String getArea() {
+        return area;
     }
 
     public double getLatitude() {
@@ -105,12 +95,16 @@ public class ReportModel implements DbModel{
         return category;
     }
 
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
     public String getTime() {
-        return time;
+        return (timestamp != null) ? new SimpleDateFormat("HH:mm", Locale.getDefault()).format(timestamp.toDate()) : "";
     }
 
     public String getDate() {
-        return date;
+        return (timestamp != null) ? new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(timestamp.toDate()) : "";
     }
 
     public String getDescription() {
@@ -133,8 +127,8 @@ public class ReportModel implements DbModel{
         this.idUser = idUser;
     }
 
-    public void setIdArea(String idArea) {
-        this.idArea = idArea;
+    public void setArea(String area) {
+        this.area = area;
     }
 
     public void setLatitude(double latitude) {
@@ -149,12 +143,8 @@ public class ReportModel implements DbModel{
         this.category = category;
     }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public void setDescription(String description) {
@@ -168,4 +158,49 @@ public class ReportModel implements DbModel{
     public void setImage(String image) {
         this.image = image;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(idReport);
+        dest.writeString(idUser);
+        dest.writeString(area);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeString(category);
+        dest.writeParcelable(timestamp, flags);
+        dest.writeString(description);
+        dest.writeInt(urgency);
+        dest.writeString(image);
+    }
+
+    protected ReportModel(Parcel in) {
+        idReport = in.readString();
+        idUser = in.readString();
+        area = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+        category = in.readString();
+        timestamp = in.readParcelable(Timestamp.class.getClassLoader());
+        description = in.readString();
+        urgency = in.readInt();
+        image = in.readString();
+    }
+
+    public static final Creator<ReportModel> CREATOR = new Creator<ReportModel>() {
+        @Override
+        public ReportModel createFromParcel(Parcel in) {
+            return new ReportModel(in);
+        }
+
+        @Override
+        public ReportModel[] newArray(int size) {
+            return new ReportModel[size];
+        }
+    };
+
 }

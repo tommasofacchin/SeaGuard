@@ -1,7 +1,9 @@
 package com.seaguard.database;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -75,11 +77,29 @@ public class DbHelper {
                     List<ReportModel> reports = new ArrayList<>();
                     querySnapshot.forEach(document -> {
                         // Converti il documento in un ReportModel
-                        ReportModel report = new ReportModel(document.getData());
-                        if (report != null) {
-                            report.setIdReport(document.getId()); // Imposta l'ID del documento
-                            reports.add(report);
-                        }
+                        ReportModel report = new ReportModel(document.getId(), document.getData());
+                        report.setIdReport(document.getId()); // Imposta l'ID del documento
+                        reports.add(report);
+                    });
+                    onSuccess.accept(reports); // Chiamata al callback con i dati
+                })
+                .addOnFailureListener(onFailure::accept); // Callback per gestire errori
+    }
+
+    public static void getReports(String idUser, Consumer<List<ReportModel>> onSuccess, Consumer<Exception> onFailure) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("reports") // Nome della collection
+                .whereEqualTo("idUser", idUser)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<ReportModel> reports = new ArrayList<>();
+                    querySnapshot.forEach(document -> {
+                        // Converti il documento in un ReportModel
+                        ReportModel report = new ReportModel(document.getId(), document.getData());
+                        report.setIdReport(document.getId()); // Imposta l'ID del documento
+                        reports.add(report);
                     });
                     onSuccess.accept(reports); // Chiamata al callback con i dati
                 })

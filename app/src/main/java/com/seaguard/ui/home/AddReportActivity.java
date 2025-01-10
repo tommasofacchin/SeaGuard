@@ -27,9 +27,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.seaguard.database.CategoryModel;
 import com.seaguard.database.DbHelper;
 import com.seaguard.database.ReportModel;
@@ -47,7 +47,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -60,8 +59,7 @@ public class AddReportActivity extends AppCompatActivity {
     private String locationName;
     private double latitude;
     private double longitude;
-    private String time;
-    private String date;
+    private Timestamp timestamp;
     private TextInputEditText description;
     private AutoCompleteTextView category;
     private int urgency;
@@ -69,6 +67,7 @@ public class AddReportActivity extends AppCompatActivity {
     private Bitmap bitmapImage;
     private final int REQUEST_PERMISSIONS_CODE = 1;
     private ActivityResultLauncher<Intent> pickImageLauncher;
+    private ReportModel reportToEdit;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -92,38 +91,53 @@ public class AddReportActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         userId = (currentUser != null) ? currentUser.getUid() : "";
 
+        // Report to Edit
+        reportToEdit = getIntent().getParcelableExtra("reportToEdit");
+
         // 1) Location Name
         locationName = "";
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-            // Got last known location. In some rare situations this can be null.
-            if(location != null) {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
+        if(reportToEdit == null) {
+            FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                // Got last known location. In some rare situations this can be null.
+                if (location != null) {
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
 
-                try {
-                    locationName = getLocationDetails(latitude, longitude).get("locality");
-                    binding.locationName.setText(locationName);
-                } catch (IOException e) {
-                    Toast.makeText(
-                        this,
-                        "Impossibile rilevare la posizione!",
-                        Toast.LENGTH_SHORT
-                    ).show();
+                    try {
+                        locationName = getLocationDetails(latitude, longitude).get("locality");
+                        binding.locationName.setText(locationName);
+                    } catch (IOException e) {
+                        Toast.makeText(
+                                this,
+                                "Impossibile rilevare la posizione!",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
                 }
-            }
-        });
+            });
+        }
+        else {
+            locationName = reportToEdit.getArea();
+            binding.locationName.setText(locationName);
+        }
 
         // 2) Time and Date
-        Calendar calendar = Calendar.getInstance();
-        time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.getTime());
-        date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.getTime());
+        timestamp = Timestamp.now();
+
+        String time = (reportToEdit == null)
+                ? new SimpleDateFormat("HH:mm", Locale.getDefault()).format(timestamp.toDate())
+                : reportToEdit.getTime();
+        String date = (reportToEdit == null)
+                ? new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(timestamp.toDate())
+                : reportToEdit.getDate();
 
         binding.time.setText(time);
         binding.date.setText(date);
 
         // 3) Description
         description = binding.description;
+        if(reportToEdit != null) description.setText(reportToEdit.getDescription());
 
         // 4) Categories
         category = binding.autoCompleteCategories;
@@ -133,6 +147,13 @@ public class AddReportActivity extends AppCompatActivity {
                     List<String> items = categories.stream().map(CategoryModel::getCategory).collect(Collectors.toList());
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, items);
                     category.setAdapter(adapter);
+
+                    if(reportToEdit != null) {
+                        String currentCategory = reportToEdit.getCategory();
+                        int i = 0;
+                        while(i < items.size() && !items.get(i).equals(currentCategory)) i++;
+                        if(i < items.size()) category.setText(items.get(i), false);
+                    }
                 },
                 (e) -> Toast.makeText(
                         this,
@@ -142,7 +163,9 @@ public class AddReportActivity extends AppCompatActivity {
         );
 
         // 5) Stars
-        urgency = 0;
+        if(reportToEdit == null) urgency = 0;
+        else urgency = reportToEdit.getUrgency();
+
         ArrayList<ImageView> stars = new ArrayList<>(Arrays.asList(
                 binding.star1,
                 binding.star2,
@@ -161,6 +184,9 @@ public class AddReportActivity extends AppCompatActivity {
                 }
             });
         }
+
+        // Set the urgency (If there is a Report to Edit)
+        for(int i = 0; i < urgency; i++) stars.get(i).setColorFilter(Color.BLUE);
 
         // 6) Upload photo
         TextView uploadStatus = binding.photos;
@@ -189,46 +215,17 @@ public class AddReportActivity extends AppCompatActivity {
 
         // 7) Save
         binding.save.setOnClickListener(v -> {
-           ReportModel elem = new ReportModel(
-                    userId,
-                    locationName,
-                    latitude,
-                    longitude,
-                    category.getText().toString(),
-                    time,
-                    date,
-                    description.getText() != null ? description.getText().toString() : "",
-                    urgency,
-                    ""
-            );
-
-           Consumer<DocumentReference> onSuccess = docRef -> {
-                Toast.makeText(
-                        this,
-                        "Report salvato con successo!",
-                        Toast.LENGTH_SHORT
-                ).show();
-                finish();
-            };
-
-           Consumer<Exception> onFailure = e -> {
-               Toast.makeText(
-                        this,
-                        "Errore nel salvataggio: " + e.getMessage(),
-                        Toast.LENGTH_SHORT
-                ).show();
-           };
-
             if(bitmapImage != null) {
                 uploadImage(
                         bitmapImage,
                         imgPath -> {
-                            elem.setImage(imgPath);
-                            DbHelper.add(elem, onSuccess, onFailure);
+                            if(reportToEdit == null) saveReport(imgPath);
+                            else updateReport(imgPath);
                         }
                 );
             }
-            else DbHelper.add(elem, onSuccess, onFailure);
+            else if(reportToEdit == null) saveReport("");
+            else updateReport("");
         });
     }
 
@@ -282,6 +279,58 @@ public class AddReportActivity extends AppCompatActivity {
         );
     }
 
+    private void saveReport (String imgPath) {
+        DbHelper.add(
+                new ReportModel(
+                    userId,
+                    locationName,
+                    latitude,
+                    longitude,
+                    category.getText().toString(),
+                    timestamp,
+                    description.getText() != null ? description.getText().toString() : "",
+                    urgency,
+                    imgPath
+                ),
+                docRef -> {
+                     Toast.makeText(
+                         this,
+                         "Report salvato con successo!",
+                         Toast.LENGTH_SHORT
+                     ).show();
+                     finish();
+                 },
+                e -> {
+                    Toast.makeText(
+                         this,
+                         "Errore nel salvataggio: " + e.getMessage(),
+                         Toast.LENGTH_SHORT
+                    ).show();
+                }
+        );
+    }
+
+    private void updateReport (String imgPath) {
+       if(reportToEdit != null) {
+           reportToEdit.setDescription(description.getText() != null ? description.getText().toString() : "");
+           reportToEdit.setCategory(category.getText().toString());
+           reportToEdit.setUrgency(urgency);
+           if(!imgPath.isEmpty()) reportToEdit.setImage(imgPath);
+
+           DbHelper.update(
+               reportToEdit,
+               e -> {
+                   Toast.makeText(
+                        this,
+                        "Errore nel salvataggio: " + e.getMessage(),
+                        Toast.LENGTH_SHORT
+                   ).show();
+               }
+           );
+
+           finish();
+       }
+    }
 
     private void requestPermissions() {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)

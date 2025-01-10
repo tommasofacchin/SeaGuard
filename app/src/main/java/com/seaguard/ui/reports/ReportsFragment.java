@@ -1,10 +1,10 @@
 package com.seaguard.ui.reports;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +16,15 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.Timestamp;
 import com.seaguard.R;
+import com.seaguard.database.ReportModel;
 import com.seaguard.databinding.FragmentReportsBinding;
+import com.seaguard.ui.home.AddReportActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ReportsFragment extends Fragment {
@@ -41,11 +44,17 @@ public class ReportsFragment extends Fragment {
             if (reports != null) {
                 reportsContainer.removeAllViews();
 
+                /*
                 for (Map<String, Object> report : reports) {
                     String idArea = getIdArea(report);
                     String date = getDate(report);
 
                     View reportView = createReportView(idArea, date);
+                    reportsContainer.addView(reportView);
+                }
+                 */
+                for(ReportModel report : reports) {
+                    View reportView = createReportView(report);
                     reportsContainer.addView(reportView);
                 }
             }
@@ -60,6 +69,7 @@ public class ReportsFragment extends Fragment {
         binding = null;
     }
 
+    /*
     private String getIdArea(Map<String, Object> report) {
         Object idAreaObj = report.get("idArea");
         if (idAreaObj instanceof String) {
@@ -87,9 +97,9 @@ public class ReportsFragment extends Fragment {
             return "Unknown date";
         }
     }
+     */
 
-
-    private View createReportView(String idArea, String date) {
+    private View createReportView(ReportModel elem) {
         LinearLayout reportLayout = new LinearLayout(requireContext());
         reportLayout.setOrientation(LinearLayout.VERTICAL);
 
@@ -97,14 +107,21 @@ public class ReportsFragment extends Fragment {
 
         reportLayout.setBackgroundColor(colorPrimary);
 
+        float cornerRadius = 16f;
+        GradientDrawable backgroundDrawable = new GradientDrawable();
+        backgroundDrawable.setColor(colorPrimary);
+        backgroundDrawable.setStroke(2, Color.GRAY);
+        backgroundDrawable.setCornerRadius(cornerRadius);
+        reportLayout.setBackground(backgroundDrawable);
+
         TextView idAreaView = new TextView(requireContext());
-        idAreaView.setText(idArea);
+        idAreaView.setText(elem.getArea());
         idAreaView.setTextSize(16);
         idAreaView.setTypeface(null, Typeface.BOLD);
         idAreaView.setPadding(25, 25, 0, 0);
 
         TextView dateView = new TextView(requireContext());
-        dateView.setText(date);
+        dateView.setText(elem.getDate());
         dateView.setTextSize(14);
         dateView.setPadding(25, 5, 0, 0);
 
@@ -121,12 +138,14 @@ public class ReportsFragment extends Fragment {
 
         reportLayout.setMinimumHeight(175);
 
+        // ----- Listener -----
+        reportLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), AddReportActivity.class);
+            intent.putExtra("reportToEdit", elem);
+            getContext().startActivity(intent);
+        });
+
         return reportLayout;
     }
-
-
-
-
-
 
 }

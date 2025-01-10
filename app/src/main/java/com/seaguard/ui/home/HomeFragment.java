@@ -138,7 +138,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if(!homeViewModel.isFirstRun()) homeViewModel.setLocation();
-        addReportIcons();
+        if(map != null) addReportIcons();
     }
 
     @Override
