@@ -129,24 +129,25 @@ public class HomeFragment extends Fragment {
     }
 
     private void addReportIcons () {
-        if (map == null) return;
         DbHelper.getReports(
                 reports -> {
-                    for(ReportModel elem : reports) {
-                        // Icon
-                        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.location);
-                        icon.setColorFilter(Color.parseColor("#FF4F378B"), PorterDuff.Mode.SRC_IN);
+                    if (map != null) {
+                        for (ReportModel elem : reports) {
+                            // Icon
+                            Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.location);
+                            icon.setColorFilter(Color.parseColor("#FF4F378B"), PorterDuff.Mode.SRC_IN);
 
-                        // Marker
-                        Marker m = new Marker(map);
-                        m.setPosition(new GeoPoint(elem.getLatitude(), elem.getLongitude()));
-                        m.setTitle(elem.getCategory()); // Set the title
-                        m.setSnippet(elem.getDescription()); // Set the snippet (optional)
-                        m.setIcon(icon);
-                        m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_TOP);
+                            // Marker
+                            Marker m = new Marker(map);
+                            m.setPosition(new GeoPoint(elem.getLatitude(), elem.getLongitude()));
+                            m.setTitle(elem.getCategory()); // Set the title
+                            m.setSnippet(elem.getDescription()); // Set the snippet (optional)
+                            m.setIcon(icon);
+                            m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_TOP);
 
-                        // Add the marker to the map
-                        map.getOverlays().add(m);
+                            // Add the marker to the map
+                            map.getOverlays().add(m);
+                        }
                     }
                 },
                 e -> Toast.makeText(

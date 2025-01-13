@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.seaguard.R;
+import com.seaguard.Utils;
 import com.seaguard.databinding.ActivityProfileBinding;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -80,6 +81,9 @@ public class ProfileActivity extends AppCompatActivity {
         nationality.setAdapter(adapter);
          */
 
+        // Logout
+        binding.buttonLogout.setOnClickListener(v -> logout());
+
         // Save
         binding.buttonSaveProfile.setOnClickListener(v -> save(onSuccess, onFailure));
 
@@ -137,7 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-            if(currentUser != null && !oldPassword.isEmpty() && !newPassword.isEmpty()) {
+            if(currentUser != null && !oldPassword.isEmpty() && Utils.validatePassword(newPassword)) {
                 AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), oldPassword);
                 currentUser.reauthenticate(credential).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -151,6 +155,14 @@ public class ProfileActivity extends AppCompatActivity {
         builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
 
         builder.show();
+    }
+
+    private void logout () {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() != null) {
+            mAuth.signOut();
+            finish();
+        }
     }
 
 }

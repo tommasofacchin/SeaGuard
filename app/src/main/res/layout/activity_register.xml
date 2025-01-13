@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center_vertical"
             android:padding="@dimen/activity_vertical_margin">
 
             <!-- Welcome text -->
@@ -25,7 +24,7 @@
                 android:id="@+id/welcome_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/welcome"
+                android:text="@string/registration"
                 android:textSize="42sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -33,6 +32,35 @@
                 android:layout_marginTop="32dp"
                 android:layout_marginBottom="20dp"
                 android:layout_gravity="center" />
+
+            <!-- Name -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/name_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:hintEnabled="true"
+                app:hintAnimationEnabled="true"
+                app:boxStrokeColor="?attr/colorOnPrimary"
+                app:boxBackgroundMode="filled"
+                app:hintTextColor="@color/purple_500"
+                app:boxCornerRadiusTopStart="@dimen/radius"
+                app:boxCornerRadiusTopEnd="@dimen/radius"
+                app:boxCornerRadiusBottomStart="@dimen/radius"
+                app:boxCornerRadiusBottomEnd="@dimen/radius"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:hint="@string/prompt_name"
+                android:inputType="textEmailAddress"
+                android:selectAllOnFocus="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:backgroundTint="@android:color/transparent" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Email -->
             <com.google.android.material.textfield.TextInputLayout
@@ -42,7 +70,7 @@
                 app:hintEnabled="true"
                 app:hintAnimationEnabled="true"
                 app:boxStrokeColor="?attr/colorOnPrimary"
-                app:boxBackgroundMode="outline"
+                app:boxBackgroundMode="filled"
                 app:hintTextColor="@color/purple_500"
                 app:boxCornerRadiusTopStart="@dimen/radius"
                 app:boxCornerRadiusTopEnd="@dimen/radius"
@@ -71,14 +99,14 @@
                 app:hintEnabled="true"
                 app:hintAnimationEnabled="true"
                 app:boxStrokeColor="?attr/colorOnPrimary"
-                app:boxBackgroundMode="outline"
+                app:boxBackgroundMode="filled"
                 app:hintTextColor="@color/purple_500"
                 app:boxCornerRadiusTopStart="@dimen/radius"
                 app:boxCornerRadiusTopEnd="@dimen/radius"
                 app:boxCornerRadiusBottomStart="@dimen/radius"
                 app:boxCornerRadiusBottomEnd="@dimen/radius"
                 app:passwordToggleEnabled="true"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="12dp"
                 android:hint="@string/prompt_password"
@@ -93,29 +121,46 @@
                     android:backgroundTint="@android:color/transparent" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Register -->
-            <TextView
-                android:id="@+id/register_link"
-                android:layout_width="wrap_content"
+            <!-- Confirm Password -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/confirm_password_field"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/register_link"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:textColor="?attr/colorOnPrimary"
-                android:layout_marginTop="32dp"
-                android:layout_gravity="center" />
+                app:hintEnabled="true"
+                app:hintAnimationEnabled="true"
+                app:boxStrokeColor="?attr/colorOnPrimary"
+                app:boxBackgroundMode="filled"
+                app:hintTextColor="@color/purple_500"
+                app:boxCornerRadiusTopStart="@dimen/radius"
+                app:boxCornerRadiusTopEnd="@dimen/radius"
+                app:boxCornerRadiusBottomStart="@dimen/radius"
+                app:boxCornerRadiusBottomEnd="@dimen/radius"
+                app:passwordToggleEnabled="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:hint="@string/prompt_confirm_password"
+                android:imeOptions="actionDone"
+                android:selectAllOnFocus="true">
 
-            <!-- Login Button -->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/confirm_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:backgroundTint="@android:color/transparent" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Sign Up Button -->
             <Button
-                android:id="@+id/signIn"
+                android:id="@+id/signUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/action_sign_in"
+                android:text="@string/action_sign_up"
                 android:layout_marginTop="30dp"
                 android:backgroundTint="@color/taupe_gray"
                 android:textColor="@color/white"
                 android:layout_gravity="center" />
-            <!-- android:enabled="false" -->
 
             <!-- ProgressBar -->
             <ProgressBar

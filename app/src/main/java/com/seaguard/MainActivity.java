@@ -33,8 +33,7 @@ import org.osmdroid.config.Configuration;
 /*
     --- LOGIN ---
 email:      info@seaguard.com
-password:   testSeaGuardAuth.2024
-new password:   testAuth.2024
+password:   testAuth.2024
  */
 
 public class MainActivity extends AppCompatActivity {
