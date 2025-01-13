@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.Timestamp;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
@@ -191,7 +190,7 @@ public class ReportModel implements DbModel, Parcelable {
         image = in.readString();
     }
 
-    public static final Creator<ReportModel> CREATOR = new Creator<ReportModel>() {
+    public static final Creator<ReportModel> CREATOR = new Creator<>() {
         @Override
         public ReportModel createFromParcel(Parcel in) {
             return new ReportModel(in);

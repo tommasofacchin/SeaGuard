@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.seaguard.R;
 import com.seaguard.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     // Sign in success, update UI with the signed-in user's information
-                    FirebaseUser user = mAuth.getCurrentUser();
                     finish();
                 } else {
                     // Disable progress bar
@@ -53,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(
                             getApplicationContext(),
-                            "Autenticazione fallita!",
+                            getString(R.string.failed_auth),
                             Toast.LENGTH_SHORT
                     ).show();
                 }
@@ -62,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         else {
             Toast.makeText(
                 getApplicationContext(),
-                "Campi NON validi!",
+                    getString(R.string.invalid_credentials),
                 Toast.LENGTH_SHORT
             ).show();
         }

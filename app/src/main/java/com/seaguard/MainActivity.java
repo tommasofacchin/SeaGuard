@@ -3,17 +3,12 @@ package com.seaguard;
 import android.Manifest;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.view.Menu;
-import android.view.MenuItem;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -39,10 +34,10 @@ import org.osmdroid.config.Configuration;
     --- LOGIN ---
 email:      info@seaguard.com
 password:   testSeaGuardAuth.2024
+new password:   testAuth.2024
  */
 
 public class MainActivity extends AppCompatActivity {
-    private ActivityMainBinding binding;
     private final int REQUEST_PERMISSIONS_CODE = 1;
     private final int REQUEST_TO_ENABLE_LOCATION_CODE = 2;
     private HomeViewModel homeViewModel;
@@ -62,22 +57,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        System.out.println("ONCREATEACTIVITY!!!");
         super.onCreate(savedInstanceState);
 
         // OpenStreetMap Configuration
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // ToolBar
         Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
-
-        // NavBar
-        BottomNavigationView navView = binding.navView;
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -96,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        System.out.println("ONSAVEISTANCESTATEDELL'ACTIVITY");
         super.onSaveInstanceState(outState);
         // Salva lo stato del NavController
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
@@ -111,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        System.out.println("ONRESTOREDELL'ACTIVITY");
         super.onRestoreInstanceState(savedInstanceState);
         // Ripristina lo stato del NavController
         Bundle navState = savedInstanceState.getBundle("nav_state");
@@ -124,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
@@ -151,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+     */
 
     private void requestPermissions() {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -182,12 +173,7 @@ public class MainActivity extends AppCompatActivity {
         if(!isEnabled){
              new AlertDialog.Builder(this)
                 .setMessage(R.string.gps_network_not_enabled)
-                .setPositiveButton(R.string.open_location_settings, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
+                .setPositiveButton(R.string.open_location_settings, (paramDialogInterface, paramInt) -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
                 .setNegativeButton(R.string.cancel,null)
                 .show();
         }

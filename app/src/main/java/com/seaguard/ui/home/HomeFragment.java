@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -43,11 +44,7 @@ public class HomeFragment extends Fragment {
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        /*
-            System.out.println("ONCREATEFRAGMENT!!!!");
-            if(savedInstanceState==null) {
-                System.out.println("BBB");
-         */
+
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -59,26 +56,20 @@ public class HomeFragment extends Fragment {
         map.setBuiltInZoomControls(false);
         map.setMultiTouchControls(true);
 
-        /*
-        MapController mapController = (MapController) map.getController();
-        mapController.setCenter(new GeoPoint(41.8902, 12.4922)); // Rome
-        mapController.setZoom(16);
-         */
-
         MapController mapController = (MapController) map.getController();
         map.setMinZoomLevel(3.5);
         mapController.setCenter(homeViewModel.getCenterPoint());
         mapController.setZoom(homeViewModel.getZoomLevel());
 
         homeViewModel.setCallBack(() -> {
-            //provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
             MyLocationNewOverlay location = new MyLocationNewOverlay(new GpsMyLocationProvider(map.getContext()), map);
             location.enableMyLocation();
             map.getOverlays().add(location);
 
-            if(homeViewModel.isFirstRun()) location.runOnFirstFix(() -> {
-                requireActivity().runOnUiThread(() -> map.getController().animateTo(location.getMyLocation()));
-            });
+            if(homeViewModel.isFirstRun())
+                location.runOnFirstFix(() ->
+                    requireActivity().runOnUiThread(() ->
+                            map.getController().animateTo(location.getMyLocation())));
         });
 
         map.setOnTouchListener((v, event) -> {
@@ -97,40 +88,6 @@ public class HomeFragment extends Fragment {
         });
 
         return root;
-        /*
-                // FAB to open an AddReportActivity
-                ExtendedFloatingActionButton fab = binding.fab;
-                fab.setOnClickListener(view -> {
-                    Intent intent = new Intent(requireActivity(), AddReportActivity.class);
-                    startActivity(intent);
-                });
-
-                if (homeViewModel.permissionsRequested()) homeViewModel.setLocation();
-                return root;
-            }else {
-
-                System.out.println("AAAAfragment");
-
-                binding = FragmentHomeBinding.inflate(inflater, container, false);
-                View root = binding.getRoot();
-                map = binding.map;
-                map.setTileSource(TileSourceFactory.MAPNIK);
-                map.setBuiltInZoomControls(false);
-                map.setMultiTouchControls(true);
-
-                double latitude = savedInstanceState.getDouble("latitude", 41.8902);
-                double longitude = savedInstanceState.getDouble("longitude", 12.4922);
-                int zoom_level = savedInstanceState.getInt("zoom_level", 16);
-
-                GeoPoint restoredCenter = new GeoPoint(latitude, longitude);
-                System.out.println("A1");
-                map.getController().setCenter(restoredCenter);
-                map.getController().setZoom(zoom_level);
-                System.out.println("A2");
-                return root;
-
-            }
-         */
     }
 
 
@@ -138,55 +95,41 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if(!homeViewModel.isFirstRun()) homeViewModel.setLocation();
-        if(map != null) addReportIcons();
+        addReportIcons();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        System.out.println("ONSAVEINSTANCESTATEfragment");
         super.onSaveInstanceState(outState);
-
-        /*
-        IGeoPoint center = map.getMapCenter();
-        outState.putDouble("latitude", center.getLatitudeE6() / 1e6);
-        outState.putDouble("longitude", center.getLongitudeE6() / 1e6);
-
-        outState.putInt("zoom_level", map.getZoomLevel());
-         */
-
     }
 
-
-
-    //Quando il fragment torna in primo piano (ad esempio, l'utente naviga indietro).
+    // Quando il fragment torna in primo piano (ad esempio, l'utente naviga indietro).
     @Override
     public void onResume() {
-        System.out.println("ONRESUMEfragment");
         super.onResume();
         if (binding != null) {
             binding.map.onResume();
         }
     }
 
-    //Quando il fragment non è più visibile mette in pausa per risparmiare risorse
+    // Quando il fragment non è più visibile mette in pausa per risparmiare risorse
     @Override
     public void onPause() {
-        System.out.println("ONPAUSEfragment");
         super.onPause();
         if (binding != null) {
             binding.map.onPause();
         }
     }
 
-    //per evitare memoryleak imposto il binding a null, altirmenti il GC non sa che può liberare la risorsa
+    // Per evitare memoryleak imposto il binding a null, altirmenti il GC non sa che può liberare la risorsa
     @Override
     public void onDestroyView() {
-        System.out.println("ONDESTROYVIEWfragment");
         super.onDestroyView();
         binding = null;
     }
 
     private void addReportIcons () {
+        if (map == null) return;
         DbHelper.getReports(
                 reports -> {
                     for(ReportModel elem : reports) {
@@ -202,20 +145,15 @@ public class HomeFragment extends Fragment {
                         m.setIcon(icon);
                         m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_TOP);
 
-                        /*
-                        m.setOnMarkerClickListener((marker, mapView) -> {
-                            // Open Report Page
-                            return true;
-                        });
-                         */
-
                         // Add the marker to the map
                         map.getOverlays().add(m);
                     }
                 },
-                e -> {
-                    // TODO
-                }
+                e -> Toast.makeText(
+                    getContext(),
+                    getString(R.string.loading_error),
+                    Toast.LENGTH_SHORT
+                ).show()
         );
     }
 

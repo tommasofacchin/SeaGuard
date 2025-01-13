@@ -49,6 +49,8 @@
                 app:boxCornerRadiusBottomStart="@dimen/radius"
                 app:boxCornerRadiusBottomEnd="@dimen/radius"
                 android:layout_marginTop="16dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
                 android:hint="@string/prompt_email"
                 android:inputType="textEmailAddress"
                 android:selectAllOnFocus="true">
@@ -77,6 +79,8 @@
                 app:boxCornerRadiusBottomEnd="@dimen/radius"
                 app:passwordToggleEnabled="true"
                 android:layout_marginTop="8dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
                 android:hint="@string/prompt_password"
                 android:imeOptions="actionDone"
                 android:selectAllOnFocus="true">

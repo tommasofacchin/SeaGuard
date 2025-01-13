@@ -22,7 +22,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -30,6 +29,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.seaguard.R;
 import com.seaguard.database.CategoryModel;
 import com.seaguard.database.DbHelper;
 import com.seaguard.database.ReportModel;
@@ -63,7 +63,6 @@ public class AddReportActivity extends AppCompatActivity {
     private TextInputEditText description;
     private AutoCompleteTextView category;
     private int urgency;
-    private TextView uploadStatus;
     private Bitmap bitmapImage;
     private final int REQUEST_PERMISSIONS_CODE = 1;
     private ActivityResultLauncher<Intent> pickImageLauncher;
@@ -77,15 +76,13 @@ public class AddReportActivity extends AppCompatActivity {
         ActivityAddReportBinding binding = ActivityAddReportBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Toobar
+        // Toolbar
         Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
 
         // Back in the toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         // Get user ID
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -110,7 +107,7 @@ public class AddReportActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         Toast.makeText(
                                 this,
-                                "Impossibile rilevare la posizione!",
+                                getString(R.string.location_error),
                                 Toast.LENGTH_SHORT
                         ).show();
                     }
@@ -157,7 +154,7 @@ public class AddReportActivity extends AppCompatActivity {
                 },
                 (e) -> Toast.makeText(
                         this,
-                        "Impossibile caricare le categorie: " + e.getMessage(),
+                        getString(R.string.categories_error),
                         Toast.LENGTH_SHORT
                 ).show()
         );
@@ -202,7 +199,7 @@ public class AddReportActivity extends AppCompatActivity {
                         Uri imageUri = data.getData();
                         try {
                             bitmapImage = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                            uploadStatus.setText("Foto allegata");
+                            uploadStatus.setText(getString(R.string.photo_uploaded));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -215,17 +212,25 @@ public class AddReportActivity extends AppCompatActivity {
 
         // 7) Save
         binding.save.setOnClickListener(v -> {
-            if(bitmapImage != null) {
-                uploadImage(
-                        bitmapImage,
-                        imgPath -> {
-                            if(reportToEdit == null) saveReport(imgPath);
-                            else updateReport(imgPath);
-                        }
-                );
+            if(fieldsCheck()) {
+                if (bitmapImage != null) {
+                    uploadImage(
+                            bitmapImage,
+                            imgPath -> {
+                                if (reportToEdit == null) saveReport(imgPath);
+                                else updateReport(imgPath);
+                            }
+                    );
+                } else if (reportToEdit == null) saveReport("");
+                else updateReport("");
             }
-            else if(reportToEdit == null) saveReport("");
-            else updateReport("");
+            else {
+                Toast.makeText(
+                    this,
+                    getString(R.string.incomplete_fields),
+                    Toast.LENGTH_SHORT
+                ).show();
+            }
         });
     }
 
@@ -259,7 +264,7 @@ public class AddReportActivity extends AppCompatActivity {
 
     private void pickImage () {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
-        pickImageLauncher.launch(Intent.createChooser(intent, "Seleziona un'immagine"));
+        pickImageLauncher.launch(Intent.createChooser(intent, getString(R.string.pick_image)));
     }
 
     private void uploadImage (Bitmap bitmap, Consumer<String> callBack) {
@@ -273,7 +278,7 @@ public class AddReportActivity extends AppCompatActivity {
                 callBack,
                 e -> Toast.makeText(
                     this,
-                    "Errore durante il salvataggio dell'immagine!",
+                    getString(R.string.photo_upload_error),
                     Toast.LENGTH_SHORT
                 ).show()
         );
@@ -295,18 +300,16 @@ public class AddReportActivity extends AppCompatActivity {
                 docRef -> {
                      Toast.makeText(
                          this,
-                         "Report salvato con successo!",
-                         Toast.LENGTH_SHORT
+                            getString(R.string.report_saved),
+                            Toast.LENGTH_SHORT
                      ).show();
                      finish();
                  },
-                e -> {
-                    Toast.makeText(
-                         this,
-                         "Errore nel salvataggio: " + e.getMessage(),
-                         Toast.LENGTH_SHORT
-                    ).show();
-                }
+                e -> Toast.makeText(
+                     this,
+                     getString(R.string.error_while_saving) + e.getMessage(),
+                     Toast.LENGTH_SHORT
+                ).show()
         );
     }
 
@@ -319,17 +322,21 @@ public class AddReportActivity extends AppCompatActivity {
 
            DbHelper.update(
                reportToEdit,
-               e -> {
-                   Toast.makeText(
-                        this,
-                        "Errore nel salvataggio: " + e.getMessage(),
-                        Toast.LENGTH_SHORT
-                   ).show();
-               }
+               e -> Toast.makeText(
+                    this,
+                    getString(R.string.error_while_saving) + e.getMessage(),
+                    Toast.LENGTH_SHORT
+               ).show()
            );
 
            finish();
        }
+    }
+
+    private boolean fieldsCheck () {
+        return  !description.getText().toString().isEmpty() &&
+                !category.getText().toString().isEmpty() &&
+                urgency != 0;
     }
 
     private void requestPermissions() {
