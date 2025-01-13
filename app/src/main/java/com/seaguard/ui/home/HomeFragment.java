@@ -131,13 +131,13 @@ public class HomeFragment extends Fragment {
     private void addReportIcons () {
         DbHelper.getReports(
                 reports -> {
-                    if (map != null) {
-                        for (ReportModel elem : reports) {
-                            // Icon
-                            Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.location);
-                            icon.setColorFilter(Color.parseColor("#FF4F378B"), PorterDuff.Mode.SRC_IN);
+                    for (ReportModel elem : reports) {
+                        // Icon
+                        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.location);
+                        icon.setColorFilter(Color.parseColor("#FF4F378B"), PorterDuff.Mode.SRC_IN);
 
-                            // Marker
+                        // Marker
+                        if (map != null) {
                             Marker m = new Marker(map);
                             m.setPosition(new GeoPoint(elem.getLatitude(), elem.getLongitude()));
                             m.setTitle(elem.getCategory()); // Set the title
