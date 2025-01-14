@@ -99,5 +99,19 @@ public class DbHelper {
                 });
     }
 
+    public static void getArticles(Consumer<List<ArticleModel>> onSuccess, Consumer<Exception> onFailure) {
+        /*FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        db.collection("reports")
+                .whereEqualTo("idUser", idUser)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .addSnapshotListener((values, e) -> {
+                    if (e != null) onFailure.accept(e);
+                    else if (values != null) {
+                        List<ReportModel> reports = new ArrayList<>();
+                        values.forEach(document -> reports.add(new ReportModel(document.getId(), document.getData())));
+                        onSuccess.accept(reports);
+                    }
+                });*/
+    }
 }
