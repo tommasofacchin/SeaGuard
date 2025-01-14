@@ -47,6 +47,16 @@ public class ArticleModel implements DbModel{
         this.link = link;
     }
 
+    public ArticleModel(String id, Map<String, Object> elem) {
+        this.id = id;
+        this.title = elem.get("title") instanceof String ? (String) elem.get("title ") : "";
+        this.longitude = elem.get("longitude") instanceof Double ? (Double) elem.get("longitude ") : 0.0;
+        this.latitude = elem.get("latitude") instanceof Double ? (Double) elem.get("latitude ") : 0.0;
+        this.description = elem.get("description") instanceof String ? (String) elem.get("description ") : "";
+        this.content = elem.get("content") instanceof String ? (String) elem.get("content ") : "";
+        this.link = elem.get("link") instanceof String ? (String) elem.get("link ") : "";
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }

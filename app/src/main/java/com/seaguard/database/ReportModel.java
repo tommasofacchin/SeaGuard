@@ -41,8 +41,8 @@ public class ReportModel implements DbModel, Parcelable {
         this.idReport = id;
         this.idUser = report.get("idUser") instanceof String ? (String) report.get("idUser") : "";
         this.area = report.get("area") instanceof String ? (String) report.get("area") : "";
-        this.latitude = report.get("latitude") instanceof Double? (double) report.get("latitude") : 0.0;
-        this.longitude = report.get("longitude") instanceof Double? (double) report.get("longitude") : 0.0;
+        this.latitude = report.get("latitude") instanceof Double ? (double) report.get("latitude") : 0.0;
+        this.longitude = report.get("longitude") instanceof Double ? (double) report.get("longitude") : 0.0;
         this.category = report.get("category") instanceof String ? (String) report.get("category") : "";
         this.timestamp = report.get("timestamp") instanceof Timestamp ? (Timestamp) report.get("timestamp") : null;
         this.description = report.get("description") instanceof String ? (String) report.get("description") : "";

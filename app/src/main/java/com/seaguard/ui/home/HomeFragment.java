@@ -140,10 +140,16 @@ public class HomeFragment extends Fragment {
                         if (map != null) {
                             Marker m = new Marker(map);
                             m.setPosition(new GeoPoint(elem.getLatitude(), elem.getLongitude()));
-                            m.setTitle(elem.getCategory()); // Set the title
-                            m.setSnippet(elem.getDescription()); // Set the snippet (optional)
                             m.setIcon(icon);
                             m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_TOP);
+
+                            // --- Listener ---
+                            m.setOnMarkerClickListener((marker, mapView) -> {
+                                Intent intent = new Intent(getContext(), ReportActivity.class);
+                                intent.putExtra("report", elem);
+                                getContext().startActivity(intent);
+                                return true;
+                            });
 
                             // Add the marker to the map
                             map.getOverlays().add(m);

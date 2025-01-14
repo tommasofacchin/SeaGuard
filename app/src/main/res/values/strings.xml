@@ -9,6 +9,12 @@
     <string name="title_profile">Profilo</string>
     <string name="title_notifications">Notifiche</string>
     <string name="title_info">Informazioni</string>
+    <string name="title_urgency">Pericolo</string>
+    <string name="title_description">Descrizione</string>
+    <string name="title_category">Categoria</string>
+    <string name="title_comments">Commenti degli altri Utenti</string>
+    <string name="title_your_comment">Lascia un Commento</string>
+    <string name="title_utility">Utilità della Segnalazione</string>
     <string name="prompt_name">Nome</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -52,4 +58,6 @@
     <string name="failed_auth">Autenticazione fallita</string>
     <string name="invalid_credentials">Campi NON validi</string>
     <string name="profile_updated">Profilo aggiornato</string>
+    <string name="post">Pubblica</string>
+    <string name="urgency_format">%1$s / 5</string>
 </resources>

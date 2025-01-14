@@ -47,7 +47,7 @@ public class DbHelper {
         ).addOnFailureListener(onFailure::accept);
     }
 
-    public static void getCategories (Consumer<List<CategoryModel>> onSuccess, Consumer<Exception> onFailure) {
+    public static void getCategories(Consumer<List<CategoryModel>> onSuccess, Consumer<Exception> onFailure) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("categories")
@@ -55,8 +55,7 @@ public class DbHelper {
                 .addOnSuccessListener(querySnapshot -> {
                     List<CategoryModel> elems = new ArrayList<>();
                     querySnapshot.forEach(document -> {
-                        CategoryModel elem = new CategoryModel(document.getData());
-                        elem.setId(document.getId());
+                        CategoryModel elem = new CategoryModel(document.getId(), document.getData());
                         elems.add(elem);
                     });
                     onSuccess.accept(elems);
@@ -100,18 +99,18 @@ public class DbHelper {
     }
 
     public static void getArticles(Consumer<List<ArticleModel>> onSuccess, Consumer<Exception> onFailure) {
-        /*FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("reports")
-                .whereEqualTo("idUser", idUser)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((values, e) -> {
                     if (e != null) onFailure.accept(e);
                     else if (values != null) {
-                        List<ReportModel> reports = new ArrayList<>();
-                        values.forEach(document -> reports.add(new ReportModel(document.getId(), document.getData())));
-                        onSuccess.accept(reports);
+                        List<ArticleModel> articles = new ArrayList<>();
+                        values.forEach(document -> articles.add(new ArticleModel(document.getId(), document.getData())));
+                        onSuccess.accept(articles);
                     }
-                });*/
+                });
     }
+
+
 }

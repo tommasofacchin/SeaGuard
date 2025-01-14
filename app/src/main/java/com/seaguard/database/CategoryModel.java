@@ -1,5 +1,6 @@
 package com.seaguard.database;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class CategoryModel implements DbModel {
@@ -10,9 +11,9 @@ public class CategoryModel implements DbModel {
         this.category = category;
     }
 
-    public CategoryModel(Map<String, Object> elem) {
-        this.id = (String) elem.get("id");
-        this.category = (String) elem.get("category");
+    public CategoryModel(String id, Map<String, Object> elem) {
+        this.id = id;
+        this.category = elem.get("category") instanceof String ? (String) elem.get("category") : "";
     }
 
     public String getCategory() {
@@ -21,10 +22,6 @@ public class CategoryModel implements DbModel {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     @Override
@@ -39,6 +36,9 @@ public class CategoryModel implements DbModel {
 
     @Override
     public Map<String, Object> toMap() {
-        return null;
+        Map<String, Object> map = new HashMap<>();
+        map.put("category", category);
+        return map;
     }
+
 }
