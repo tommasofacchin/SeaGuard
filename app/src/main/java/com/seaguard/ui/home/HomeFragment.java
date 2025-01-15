@@ -137,7 +137,7 @@ public class HomeFragment extends Fragment {
                         icon.setColorFilter(Color.parseColor("#FF4F378B"), PorterDuff.Mode.SRC_IN);
 
                         // Marker
-                        if (map != null) {
+                        try {
                             Marker m = new Marker(map);
                             m.setPosition(new GeoPoint(elem.getLatitude(), elem.getLongitude()));
                             m.setIcon(icon);
@@ -153,6 +153,9 @@ public class HomeFragment extends Fragment {
 
                             // Add the marker to the map
                             map.getOverlays().add(m);
+                        }
+                        catch (Exception e) {
+                            return;
                         }
                     }
                 },
