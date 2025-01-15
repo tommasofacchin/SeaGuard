@@ -263,7 +263,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@android:color/transparent"
-                        android:hint="Commento"
+                        android:hint="@string/hint_comment"
                         android:minHeight="100dp" />
                 </com.google.android.material.textfield.TextInputLayout>
 

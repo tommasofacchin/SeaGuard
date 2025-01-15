@@ -7,7 +7,6 @@
     android:background="@android:color/transparent"
     android:layout_marginBottom="8dp">
 
-    <!-- Riga con nominativo e voto -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,9 +30,9 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- Stars -->
+            <!-- Rating -->
             <TextView
-                android:id="@+id/comment_utility"
+                android:id="@+id/comment_rating"
                 android:text="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,12 +42,23 @@
                 android:layout_marginStart="4dp"/>
 
             <ImageView
-                android:id="@+id/icona_stella"
+                android:id="@+id/star_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/star"/>
         </LinearLayout>
     </LinearLayout>
+
+    <!-- Time and Date -->
+    <TextView
+        android:id="@+id/comment_timeAndDate"
+        android:text="01/01/2000 alle 12.00"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="2dp" />
 
     <!-- Comment -->
     <TextView
@@ -58,6 +68,6 @@
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:textColor="@android:color/black"
-        android:layout_marginTop="4dp" />
+        android:layout_marginTop="8dp" />
 
     </LinearLayout>

@@ -1,22 +1,40 @@
 package com.seaguard.ui.home;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.seaguard.R;
+import com.seaguard.database.CommentModel;
+import com.seaguard.database.DbHelper;
 import com.seaguard.database.ReportModel;
 import com.seaguard.databinding.ActivityReportBinding;
-import com.seaguard.databinding.CommentLayoutBinding;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ReportActivity extends AppCompatActivity {
     private ReportModel currentReport;
+    private MutableLiveData<List<CommentModel>> comments;
+    private TextView commentField;
+    private int rating;
+    private ArrayList<ImageView> stars;
+    private ListenerRegistration listenerRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +70,43 @@ public class ReportActivity extends AppCompatActivity {
         // Category
         binding.category.setText(currentReport.getCategory());
 
-        // Comments
+        // Post your comment
+        commentField = binding.commentField;
+        rating = 0;
+
+        stars = new ArrayList<>(Arrays.asList(
+                binding.star1,
+                binding.star2,
+                binding.star3,
+                binding.star4,
+                binding.star5
+        ));
+
+        for(int i = 0; i < stars.size(); i++) {
+            int current = i;
+            stars.get(i).setOnClickListener(v -> {
+                rating = current + 1;
+                for(int j = 0; j < stars.size(); j++) {
+                    if(j <= current) stars.get(j).setColorFilter(Color.BLUE);
+                    else stars.get(j).clearColorFilter();
+                }
+            });
+        }
+
+        binding.postComment.setOnClickListener(v -> postComment());
+
+        // Other Comments
+        comments = new MutableLiveData<>();
         LinearLayout commentsContainer = binding.reportsContainer;
-        commentsContainer.addView(createCommentView());
+
+        loadComments();
+        comments.observe(this, list -> {
+            if (list != null) {
+                commentsContainer.removeAllViews();
+                for (CommentModel elem : list)
+                    commentsContainer.addView(createCommentView(elem));
+            }
+        });
 
     }
 
@@ -67,16 +119,80 @@ public class ReportActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private View createCommentView () {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (listenerRef != null) listenerRef.remove();
+    }
+
+    private void postComment () {
+        String content = commentField.getText().toString();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        Timestamp timestamp = Timestamp.now();
+
+        if (currentUser != null && !content.isEmpty() && rating != 0) {
+            DbHelper.add(
+                    new CommentModel(
+                            currentReport.getId(),
+                            currentUser.getUid(),
+                            currentUser.getDisplayName(),
+                            rating,
+                            content,
+                            timestamp
+                    ),
+                    docRef -> {
+                        Toast.makeText(
+                            this,
+                            getString(R.string.comment_saved),
+                            Toast.LENGTH_SHORT
+                        ).show();
+                        // Clean text field and stars
+                        clearCommentFields();
+                    },
+                    e -> Toast.makeText(
+                        this,
+                        getString(R.string.error_while_saving),
+                        Toast.LENGTH_SHORT
+                    ).show()
+            );
+        }
+        else Toast.makeText(
+            this,
+            getString(R.string.incomplete_fields),
+            Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    private void loadComments () {
+        listenerRef = DbHelper.getComments(
+                currentReport.getId(),
+                comments::setValue,
+                e ->  Toast.makeText(
+                    this,
+                    getString(R.string.loading_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+        );
+    }
+
+    private void clearCommentFields () {
+        commentField.setText("");
+        rating = 0;
+        for (ImageView elem : stars) elem.clearColorFilter();
+    }
+
+    private View createCommentView (CommentModel elem) {
         View commentLayout = LayoutInflater.from(this).inflate(R.layout.comment_layout, null);
 
         TextView username = commentLayout.findViewById(R.id.comment_username);
-        TextView utility = commentLayout.findViewById(R.id.comment_utility);
+        TextView rating = commentLayout.findViewById(R.id.comment_rating);
+        TextView timeAndDate = commentLayout.findViewById(R.id.comment_timeAndDate);
         TextView content = commentLayout.findViewById(R.id.comment_content);
 
-        username.setText("Username");
-        utility.setText("5");
-        content.setText("This is a comment.");
+        username.setText(elem.getUsername());
+        rating.setText(String.valueOf(elem.getRating()));
+        timeAndDate.setText(getString(R.string.timeAndDate_format, elem.getDate(), elem.getTime()));
+        content.setText(elem.getContent());
 
         return commentLayout;
     }

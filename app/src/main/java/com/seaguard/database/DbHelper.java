@@ -2,6 +2,7 @@ package com.seaguard.database;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -82,10 +83,10 @@ public class DbHelper {
                 .addOnFailureListener(onFailure::accept); // Callback per gestire errori
     }
 
-    public static void getReports(String idUser, Consumer<List<ReportModel>> onSuccess, Consumer<Exception> onFailure) {
+    public static ListenerRegistration getReports(String idUser, Consumer<List<ReportModel>> onSuccess, Consumer<Exception> onFailure) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("reports")
+        return db.collection("reports")
                 .whereEqualTo("idUser", idUser)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((values, e) -> {
@@ -98,16 +99,32 @@ public class DbHelper {
                 });
     }
 
-    public static void getArticles(Consumer<List<ArticleModel>> onSuccess, Consumer<Exception> onFailure) {
+    public static ListenerRegistration getArticles(Consumer<List<ArticleModel>> onSuccess, Consumer<Exception> onFailure) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("reports")
+        return db.collection("reports")
                 .addSnapshotListener((values, e) -> {
                     if (e != null) onFailure.accept(e);
                     else if (values != null) {
                         List<ArticleModel> articles = new ArrayList<>();
                         values.forEach(document -> articles.add(new ArticleModel(document.getId(), document.getData())));
                         onSuccess.accept(articles);
+                    }
+                });
+    }
+
+     public static ListenerRegistration getComments(String idReport, Consumer<List<CommentModel>> onSuccess, Consumer<Exception> onFailure) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        return db.collection("comments")
+                .whereEqualTo("idReport", idReport)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .addSnapshotListener((values, e) -> {
+                    if (e != null) onFailure.accept(e);
+                    else if (values != null) {
+                        List<CommentModel> comments = new ArrayList<>();
+                        values.forEach(document -> comments.add(new CommentModel(document.getId(), document.getData())));
+                        onSuccess.accept(comments);
                     }
                 });
     }
