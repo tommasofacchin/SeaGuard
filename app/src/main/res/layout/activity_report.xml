@@ -382,7 +382,7 @@
 
                 <!-- Content -->
                 <LinearLayout
-                    android:id="@+id/reports_container"
+                    android:id="@+id/commentsContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"

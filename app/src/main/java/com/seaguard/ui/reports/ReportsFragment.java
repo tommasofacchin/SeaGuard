@@ -30,7 +30,6 @@ public class ReportsFragment extends Fragment {
         View root = binding.getRoot();
 
         LinearLayout reportsContainer = binding.reportsContainer;
-
         reportsViewModel.getReports().observe(getViewLifecycleOwner(), reports -> {
             if (reports != null) {
                 reportsContainer.removeAllViews();

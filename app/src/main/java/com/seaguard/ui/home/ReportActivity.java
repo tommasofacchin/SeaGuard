@@ -53,7 +53,7 @@ public class ReportActivity extends AppCompatActivity {
         binding.category.setText(currentReport.getCategory());
 
         // Comments
-        LinearLayout commentsContainer = binding.reportsContainer;
+        LinearLayout commentsContainer = binding.commentsContainer;
         commentsContainer.addView(createCommentView());
 
     }

@@ -1,21 +1,23 @@
 package com.seaguard.database;
 
+import com.google.firebase.Timestamp;
+
 import org.osmdroid.api.IGeoPoint;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class ArticleModel implements DbModel{
 
     private String id;
     private String title;
-    private double longitude;
-    private double latitude;
     private String description;
     private String content; // Testo completo dell'articolo
     private String link; // Link esterno (se necessario)
-
+    private Timestamp timestamp;
     @Override
     public String getCollectionPath() {
         return "articles";
@@ -31,42 +33,47 @@ public class ArticleModel implements DbModel{
         Map<String, Object> map = new HashMap<>();
         map.put("title", title);
         map.put("description", description);
-        map.put("latitude", latitude);
-        map.put("longitude", longitude);
         map.put("content", content);
-        map.put("link", description);
+        map.put("link", link);
+        map.put("timestamp", timestamp);
         return map;
     }
 
-    public ArticleModel(String title, double longitude, double latitude, String description, String content, String link) {
+    public ArticleModel(String title, double longitude, double latitude, String description, String content, String link, Timestamp timestamp) {
         this.title = title;
-        this.longitude = longitude;
-        this.latitude = latitude;
         this.description = description;
         this.content = content;
         this.link = link;
+        this.timestamp = timestamp;
     }
 
     public ArticleModel(String id, Map<String, Object> elem) {
         this.id = id;
-        this.title = elem.get("title") instanceof String ? (String) elem.get("title ") : "";
-        this.longitude = elem.get("longitude") instanceof Double ? (Double) elem.get("longitude ") : 0.0;
-        this.latitude = elem.get("latitude") instanceof Double ? (Double) elem.get("latitude ") : 0.0;
-        this.description = elem.get("description") instanceof String ? (String) elem.get("description ") : "";
-        this.content = elem.get("content") instanceof String ? (String) elem.get("content ") : "";
-        this.link = elem.get("link") instanceof String ? (String) elem.get("link ") : "";
+        this.title = elem.get("title") instanceof String ? (String) elem.get("title") : "";
+        this.description = elem.get("description") instanceof String ? (String) elem.get("description") : "";
+        this.content = elem.get("content") instanceof String ? (String) elem.get("content") : "";
+        this.link = elem.get("link") instanceof String ? (String) elem.get("link") : "";
+        this.timestamp = elem.get("timestamp") instanceof Timestamp ? (Timestamp) elem.get("timestamp") : null;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public String getTime() {
+        return (timestamp != null) ? new SimpleDateFormat("HH:mm", Locale.getDefault()).format(timestamp.toDate()) : "";
+    }
+
+    public String getDate() {
+        return (timestamp != null) ? new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(timestamp.toDate()) : "";
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public void setDescription(String description) {
@@ -91,14 +98,6 @@ public class ArticleModel implements DbModel{
 
     public String getDescription() {
         return description;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
     }
 
     public String getTitle() {
