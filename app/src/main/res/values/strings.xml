@@ -63,4 +63,5 @@
     <string name="urgency_format">%1$s / 5</string>
     <string name="timeAndDate_format">%1$s alle %2$s</string>
     <string name="hint_comment">Commento</string>
+    <string name="no_data">Nessun elemento disponibile</string>
 </resources>
