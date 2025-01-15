@@ -98,7 +98,7 @@ public class ReportActivity extends AppCompatActivity {
 
         // Other Comments
         comments = new MutableLiveData<>();
-        LinearLayout commentsContainer = binding.reportsContainer;
+        LinearLayout commentsContainer = binding.commentsContainer;
 
         loadComments();
         comments.observe(this, list -> {

@@ -102,7 +102,7 @@ public class DbHelper {
     public static ListenerRegistration getArticles(Consumer<List<ArticleModel>> onSuccess, Consumer<Exception> onFailure) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        return db.collection("reports")
+        return db.collection("articles")
                 .addSnapshotListener((values, e) -> {
                     if (e != null) onFailure.accept(e);
                     else if (values != null) {
