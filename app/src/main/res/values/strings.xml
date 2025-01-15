@@ -50,6 +50,7 @@
     <string name="error_while_saving">Errore durante il salvataggio</string>
     <string name="upload_photo_status">Nessuna foto</string>
     <string name="report_saved">Segnalazione salvata</string>
+    <string name="comment_saved">Commento salvato</string>
     <string name="location_error">Impossibile rilevare la posizione</string>
     <string name="categories_error">Impossibile caricare le categorie</string>
     <string name="pick_image">Seleziona una Foto</string>
@@ -60,4 +61,7 @@
     <string name="profile_updated">Profilo aggiornato</string>
     <string name="post">Pubblica</string>
     <string name="urgency_format">%1$s / 5</string>
+    <string name="timeAndDate_format">%1$s alle %2$s</string>
+    <string name="hint_comment">Commento</string>
+    <string name="no_data">Nessun elemento disponibile</string>
 </resources>

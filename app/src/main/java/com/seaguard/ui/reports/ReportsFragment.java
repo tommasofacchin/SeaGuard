@@ -30,6 +30,9 @@ public class ReportsFragment extends Fragment {
         View root = binding.getRoot();
 
         LinearLayout reportsContainer = binding.reportsContainer;
+
+        setEmptySting(true);
+
         reportsViewModel.getReports().observe(getViewLifecycleOwner(), reports -> {
             if (reports != null) {
                 reportsContainer.removeAllViews();
@@ -37,6 +40,7 @@ public class ReportsFragment extends Fragment {
                     reportsContainer.addView(createReportView(report));
                 }
             }
+            setEmptySting(reports == null || reports.isEmpty());
         });
 
         return root;
@@ -81,6 +85,17 @@ public class ReportsFragment extends Fragment {
         });
 
         return reportLayout;
+    }
+
+    private void setEmptySting (boolean val) {
+        if (val) {
+            binding.reportsContainer.setVisibility(View.GONE);
+            binding.emptyReports.setVisibility(View.VISIBLE);
+        }
+        else {
+            binding.reportsContainer.setVisibility(View.VISIBLE);
+            binding.emptyReports.setVisibility(View.GONE);
+        }
     }
 
 }
