@@ -56,10 +56,10 @@ public class ReportsFragment extends Fragment {
         @SuppressLint("InflateParams") View reportLayout = LayoutInflater.from(requireContext()).inflate(R.layout.report_layout, null);
         TextView areaView = reportLayout.findViewById(R.id.areaView);
         TextView dateView = reportLayout.findViewById(R.id.dateView);
-
+        TextView reportType = reportLayout.findViewById(R.id.reportType);
         areaView.setText(elem.getArea());
         dateView.setText(elem.getDate());
-
+        reportType.setText(elem.getCategory());
         // Convert 16dp to pixels
         int marginInDp = 16; // Margin in dp
         float scale = requireContext().getResources().getDisplayMetrics().density; // Get the scale factor for converting dp to pixels
