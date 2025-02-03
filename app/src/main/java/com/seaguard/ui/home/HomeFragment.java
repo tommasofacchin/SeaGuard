@@ -133,7 +133,7 @@ public class HomeFragment extends Fragment {
                 reports -> {
                     for (ReportModel elem : reports) {
                         // Icon
-                        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.location);
+                        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.pin_reports);
                         icon.setColorFilter(Color.parseColor("#FF4F378B"), PorterDuff.Mode.SRC_IN);
 
                         // Marker
