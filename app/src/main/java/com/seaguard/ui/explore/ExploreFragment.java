@@ -18,6 +18,9 @@ import com.seaguard.database.ArticleModel;
 import com.seaguard.database.ReportModel;
 import com.seaguard.databinding.FragmentExploreBinding;
 import com.seaguard.ui.home.AddReportActivity;
+import android.net.Uri;
+
+
 
 public class ExploreFragment extends Fragment {
 
@@ -79,9 +82,9 @@ public class ExploreFragment extends Fragment {
 
         // ----- Listener -----
         articleLayout.setOnClickListener(v -> {
-            /*Intent intent = new Intent(getContext(), AddReportActivity.class);
-            intent.putExtra("reportToEdit", elem);
-            getContext().startActivity(intent);*/
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(elem.getLink())); // Usa il link dell'articolo
+            startActivity(intent); // Avvia l'intento
         });
 
         return articleLayout;
