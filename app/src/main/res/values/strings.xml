@@ -8,13 +8,15 @@
     <string name="title_report">Segnalazione</string>
     <string name="title_profile">Profilo</string>
     <string name="title_notifications">Notifiche</string>
-    <string name="title_info">Informazioni</string>
+    <string name="title_info">Informativa sulla Privacy</string>
     <string name="title_urgency">Pericolo</string>
     <string name="title_description">Descrizione</string>
     <string name="title_category">Categoria</string>
+    <string name="title_entity">Ente Assegnato</string>
     <string name="title_comments">Commenti degli altri Utenti</string>
     <string name="title_your_comment">Lascia un Commento</string>
     <string name="title_utility">Utilità della Segnalazione</string>
+    <string name="title_info_privacy">Informativa sulla Privacy</string>
     <string name="prompt_name">Nome</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -64,4 +66,56 @@
     <string name="timeAndDate_format">%1$s alle %2$s</string>
     <string name="hint_comment">Commento</string>
     <string name="no_data">Nessun elemento disponibile</string>
+    <string name="informativa">
+        Informativa sulla Privacy e Cookie Policy
+        1. Introduzione
+        Questa informativa descrive come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali quando utilizzi l’applicazione Seaguard. L’uso dell’app implica l’accettazione della presente informativa.
+        2. Titolare del trattamento
+        Il titolare del trattamento dei dati è Seaguard, contattabile via email a seaguard@gmail.com.
+        3. Dati raccolti
+        L’app raccoglie i seguenti dati personali:
+        Dati di registrazione: Nome, cognome, email, password.
+        Dati di localizzazione: Posizione GPS per segnalazioni e notifiche.
+        Dati relativi alle segnalazioni: Descrizione, immagini e posizione degli eventi segnalati.
+        Dati di utilizzo: Informazioni su come utilizzi l’app per migliorare i servizi.
+        4. Finalità del trattamento
+        I dati vengono utilizzati per:
+        Consentire la registrazione e l’uso dell’app.
+        Mostrare segnalazioni su una mappa.
+        Inviare notifiche su eventi rilevanti.
+        Gestire la sicurezza dell’account.
+        Rispettare obblighi legali e rispondere a richieste delle autorità.
+        5. Base giuridica del trattamento
+        Il trattamento dei dati si basa su:
+        Esecuzione di un contratto (uso dell’app).
+        Interesse legittimo (prevenzione di abusi, miglioramento dei servizi).
+        Consenso esplicito (per dati di localizzazione e notifiche push).
+        6. Conservazione dei dati
+        I dati vengono conservati per il tempo necessario a fornire il servizio e per adempiere agli obblighi di legge. Le segnalazioni vengono automaticamente rimosse dopo 7 giorni.
+        7. Condivisione dei dati
+        I dati possono essere condivisi con:
+        Autorità competenti in caso di richieste legali.
+        Fornitori di servizi terzi (hosting, gestione dati) che trattano i dati in conformità al GDPR.
+        Altri utenti dell’app per visualizzare le segnalazioni.
+        8. Sicurezza dei dati
+        Adottiamo misure di sicurezza tecniche e organizzative per proteggere i tuoi dati da accessi non autorizzati.
+        9. Diritti dell’utente
+        Puoi esercitare i seguenti diritti:
+        Accesso ai dati.
+        Rettifica o cancellazione dei dati.
+        Limitazione o opposizione al trattamento.
+        Portabilità dei dati.
+        Per esercitare i tuoi diritti, contattaci a [email].
+
+        Cookie Policy
+        L’app utilizza cookie e tecnologie simili per migliorare l’esperienza utente.
+        1. Cosa sono i cookie?
+        I cookie sono piccoli file di testo salvati sul tuo dispositivo per migliorare la navigazione.
+        2. Tipologie di cookie utilizzati
+        Cookie tecnici: Necessari per il funzionamento dell’app.
+        Cookie analitici: Raccolgono dati anonimi sulle interazioni con l’app.
+        Cookie di terze parti: Utilizzati da servizi esterni (es. Google Analytics, Firebase).
+        3. Gestione dei cookie
+        Puoi disattivare i cookie nelle impostazioni del dispositivo, ma alcune funzionalità potrebbero non funzionare correttamente.
+    </string>
 </resources>

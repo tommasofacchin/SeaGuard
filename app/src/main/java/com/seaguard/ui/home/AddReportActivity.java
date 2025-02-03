@@ -30,8 +30,10 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.seaguard.R;
+import com.seaguard.Utils;
 import com.seaguard.database.CategoryModel;
 import com.seaguard.database.DbHelper;
+import com.seaguard.database.EntityModel;
 import com.seaguard.database.ReportModel;
 import com.seaguard.databinding.ActivityAddReportBinding;
 
@@ -48,6 +50,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,6 +59,7 @@ import java.util.stream.Collectors;
 
 public class AddReportActivity extends AppCompatActivity {
     private String userId;
+    private String entityId;
     private String locationName;
     private double latitude;
     private double longitude;
@@ -262,6 +266,35 @@ public class AddReportActivity extends AppCompatActivity {
         return locationDetails;
     }
 
+    private void setNearestEntity (Runnable saveToDb) {
+        Map<String, Double> distances = new HashMap<>();
+
+        DbHelper.getEntities(
+                list -> {
+                    for (EntityModel elem : list) {
+                        Double dist = Utils.getDistance(elem.getLatitude(), elem.getLongitude(), latitude, longitude);
+                        distances.put(elem.getId(), dist);
+                    }
+
+                    String nearestEntity = null;
+                    for (Map.Entry<String, Double> entry : distances.entrySet()) {
+                        if (nearestEntity == null)
+                            nearestEntity = entry.getKey();
+                        else if (entry.getValue() < distances.get(nearestEntity))
+                            nearestEntity = entry.getKey();
+                    }
+
+                    entityId = nearestEntity != null ? nearestEntity : "";
+                    saveToDb.run();
+                },
+                e -> Toast.makeText(
+                    this,
+                    getString(R.string.error_while_saving),
+                    Toast.LENGTH_SHORT
+                ).show()
+        );
+    }
+
     private void pickImage () {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
         pickImageLauncher.launch(Intent.createChooser(intent, getString(R.string.pick_image)));
@@ -285,9 +318,10 @@ public class AddReportActivity extends AppCompatActivity {
     }
 
     private void saveReport (String imgPath) {
-        DbHelper.add(
+        Runnable saveToDb = () -> DbHelper.add(
                 new ReportModel(
                     userId,
+                    entityId,
                     locationName,
                     latitude,
                     longitude,
@@ -311,6 +345,8 @@ public class AddReportActivity extends AppCompatActivity {
                      Toast.LENGTH_SHORT
                 ).show()
         );
+
+        setNearestEntity(saveToDb);
     }
 
     private void updateReport (String imgPath) {

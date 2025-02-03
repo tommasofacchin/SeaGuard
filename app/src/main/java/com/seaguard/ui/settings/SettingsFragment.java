@@ -34,7 +34,10 @@ public class SettingsFragment extends Fragment {
 
         notifications.setOnClickListener(v -> {});
 
-        info.setOnClickListener(v -> {});
+        info.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), InfoActivity.class);
+            startActivity(intent);
+        });
 
         return root;
     }

@@ -129,5 +129,33 @@ public class DbHelper {
                 });
     }
 
+    public static void getEntities (Consumer<List<EntityModel>> onSuccess, Consumer<Exception> onFailure) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("entities")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<EntityModel> entities = new ArrayList<>();
+                    querySnapshot.forEach(document -> {
+                        entities.add(new EntityModel(document.getId(), document.getData()));
+                    });
+                    onSuccess.accept(entities);
+                })
+                .addOnFailureListener(onFailure::accept);
+    }
+
+    public static void getEntity (String id, Consumer<EntityModel> onSuccess, Consumer<Exception> onFailure) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("entities")
+                .document(id)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        onSuccess.accept(new EntityModel(documentSnapshot.getId(), documentSnapshot.getData()));
+                    }
+                })
+                .addOnFailureListener(onFailure::accept);
+    }
 
 }

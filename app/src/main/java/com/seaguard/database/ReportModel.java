@@ -16,6 +16,7 @@ public class ReportModel implements DbModel, Parcelable {
 
     private String idReport;
     private String idUser;
+    private String idEntity;
     private String area;
     private double latitude;
     private double longitude;
@@ -25,8 +26,9 @@ public class ReportModel implements DbModel, Parcelable {
     private int urgency;
     private String image;
 
-    public ReportModel(String idUser, String area, double latitude, double longitude, String category, Timestamp timestamp, String description, int urgency, String image) {
+    public ReportModel(String idUser, String idEntity, String area, double latitude, double longitude, String category, Timestamp timestamp, String description, int urgency, String image) {
         this.idUser = idUser;
+        this.idEntity = idEntity;
         this.area = area;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -40,6 +42,7 @@ public class ReportModel implements DbModel, Parcelable {
     public ReportModel(String id, Map<String, Object> report) {
         this.idReport = id;
         this.idUser = report.get("idUser") instanceof String ? (String) report.get("idUser") : "";
+        this.idEntity = report.get("idEntity") instanceof String ? (String) report.get("idEntity") : "";
         this.area = report.get("area") instanceof String ? (String) report.get("area") : "";
         this.latitude = report.get("latitude") instanceof Double ? (double) report.get("latitude") : 0.0;
         this.longitude = report.get("longitude") instanceof Double ? (double) report.get("longitude") : 0.0;
@@ -64,6 +67,7 @@ public class ReportModel implements DbModel, Parcelable {
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("idUser", idUser);
+        map.put("idEntity", idEntity);
         map.put("area", area);
         map.put("latitude", latitude);
         map.put("longitude", longitude);
@@ -76,6 +80,10 @@ public class ReportModel implements DbModel, Parcelable {
     }
     public String getIdUser() {
         return idUser;
+    }
+
+    public String getIdEntity() {
+        return idEntity;
     }
 
     public String getArea() {
@@ -126,6 +134,10 @@ public class ReportModel implements DbModel, Parcelable {
         this.idUser = idUser;
     }
 
+    public void setIdEntity(String idEntity) {
+        this.idEntity = idEntity;
+    }
+
     public void setArea(String area) {
         this.area = area;
     }
@@ -167,6 +179,7 @@ public class ReportModel implements DbModel, Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(idReport);
         dest.writeString(idUser);
+        dest.writeString(idEntity);
         dest.writeString(area);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
@@ -180,6 +193,7 @@ public class ReportModel implements DbModel, Parcelable {
     protected ReportModel(Parcel in) {
         idReport = in.readString();
         idUser = in.readString();
+        idEntity = in.readString();
         area = in.readString();
         latitude = in.readDouble();
         longitude = in.readDouble();

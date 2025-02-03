@@ -70,6 +70,16 @@ public class ReportActivity extends AppCompatActivity {
         // Category
         binding.category.setText(currentReport.getCategory());
 
+        // Entity
+        binding.entity.setText(" - ");
+        if (!currentReport.getIdEntity().isEmpty())
+            DbHelper.getEntity(
+                    currentReport.getIdEntity(),
+                    elem -> {
+                        binding.entity.setText(elem.getName());
+                    },
+                    e -> {}
+            );
 
         // Post your comment
         commentField = binding.commentField;
